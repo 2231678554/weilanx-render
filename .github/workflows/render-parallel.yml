@@ -50,7 +50,7 @@ jobs:
           mkdir -p public/audio/${{ inputs.ep }} out
           python3 -c "import wave;w=wave.open('public/audio/${{ inputs.ep }}/mix.wav','wb');w.setnchannels(2);w.setsampwidth(2);w.setframerate(48000);w.writeframes(bytes(4*48000));w.close()"
           npx remotion render src/index.ts ${{ inputs.ep }} out/part-$(printf %02d ${{ matrix.i }}).mp4 \
-            --frames=${{ matrix.a }}-${{ matrix.b }} --muted --codec=h264 --crf=18 --concurrency=4
+            --frames=${{ matrix.a }}-${{ matrix.b }} --muted --codec=h264 --crf=18 --concurrency=$(nproc)
       - uses: actions/upload-artifact@v4
         with: {name: 'part-${{ matrix.i }}', path: out/, retention-days: 3}
   audio:
@@ -65,6 +65,7 @@ jobs:
       - name: 配乐 + 音效 + 混音
         run: |
           mkdir -p public/audio/$EP
+          NODE_OPTIONS=--max-old-space-size=4096 node audio/synth.mjs
           node audio/episodes/$EP.mjs
           npx tsx -e "import('./src/episodes/$EP/timeline.ts').then(m=>console.log(JSON.stringify({SFX:m.SFX,DURATION:m.DURATION,FPS:m.FPS})))" > sfx.json
           python3 audio/episodes/${EP%%-*}_mix.py sfx.json mix.wav
