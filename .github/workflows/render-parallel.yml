@@ -1,0 +1,66 @@
+# 并行渲染（无声画面）：Actions → Render parallel → Run workflow。
+# 拆成 N 段同时渲染，最后无损拼接；声音（配乐+音效）在本地合成后再合进去，所以仓库里不放任何音频。
+name: Render parallel
+on:
+  workflow_dispatch:
+    inputs:
+      ep:
+        description: 作品 ID（Composition id）
+        required: true
+        default: ep52-tang-beacon
+      chunks:
+        description: 分几段并行（1–20）
+        required: true
+        default: '20'
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.p.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: 22, cache: npm}
+      - run: npm ci
+      - id: p
+        run: |
+          N=$(npx remotion compositions src/index.ts 2>/dev/null | awk -v id="${{ inputs.ep }}" '$1==id{print $4}')
+          echo "frames=$N"
+          test -n "$N"
+          node -e "const n=+process.argv[1],k=+process.argv[2];const s=Math.ceil(n/k);const m=[];for(let i=0;i*s<n;i++)m.push({i,a:i*s,b:Math.min(n,(i+1)*s)-1});console.log('matrix='+JSON.stringify({include:m}))" "$N" "${{ inputs.chunks }}" >> $GITHUB_OUTPUT
+  render:
+    needs: plan
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix: ${{ fromJson(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: 22, cache: npm}
+      - name: 字体
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk fonts-noto-color-emoji fonts-liberation >/dev/null
+          mkdir -p ~/.config/fontconfig && cp .github/render/fonts.conf ~/.config/fontconfig/fonts.conf && fc-cache -f >/dev/null
+      - run: npm ci
+      - name: 渲染第 ${{ matrix.i }} 段（帧 ${{ matrix.a }}–${{ matrix.b }}）
+        run: |
+          mkdir -p public/audio/${{ inputs.ep }} out
+          ffmpeg -v error -f lavfi -i anullsrc=r=48000:cl=stereo -t 1 public/audio/${{ inputs.ep }}/mix.wav
+          npx remotion render src/index.ts ${{ inputs.ep }} out/part-$(printf %02d ${{ matrix.i }}).mp4 \
+            --frames=${{ matrix.a }}-${{ matrix.b }} --muted --codec=h264 --crf=18 --concurrency=4
+      - uses: actions/upload-artifact@v4
+        with: {name: 'part-${{ matrix.i }}', path: out/, retention-days: 3}
+  join:
+    needs: render
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: {pattern: 'part-*', path: parts, merge-multiple: true}
+      - run: |
+          ls parts | sort | sed "s#^#file 'parts/#; s#\$#'#" > list.txt
+          ffmpeg -v error -f concat -safe 0 -i list.txt -c copy video.mp4
+          ffprobe -v error -show_entries format=duration -of csv=p=0 video.mp4
+      - uses: actions/upload-artifact@v4
+        with: {name: '${{ inputs.ep }}-video', path: video.mp4, retention-days: 7}
