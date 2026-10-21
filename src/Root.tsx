@@ -64,8 +64,9 @@ import {Ep25Cover} from './episodes/ep25-behind-cover/Ep25Cover';
 import {DURATION as EP28_DURATION, FPS as EP28_FPS, H as EP28_H, W as EP28_W} from './episodes/ep28-express-relay/timeline';
 import {DURATION as EP52_DURATION, FPS as EP52_FPS, H as EP52_H, W as EP52_W} from './episodes/ep52-tang-beacon/timeline';
 import {Ep52Beacon} from './episodes/ep52-tang-beacon/Ep52Beacon';
+import {DURATION as EP53_DURATION, FPS as EP53_FPS, H as EP53_H, W as EP53_W} from './episodes/ep53-changan-curfew/timeline';
+import {Ep53Curfew} from './episodes/ep53-changan-curfew/Ep53Curfew';
 import {ReliefBake} from './episodes/ep52-tang-beacon/ReliefBake';
-import {Ep52Cover34, Ep52Cover43} from './episodes/ep52-tang-beacon/Cover';
 import {Ep28Relay} from './episodes/ep28-express-relay/Ep28Relay';
 import {Ep28CoverTall} from './episodes/ep28-express-relay/CoverTall';
 import {DURATION as EP30_DURATION, FPS as EP30_FPS, H as EP30_H, W as EP30_W} from './episodes/ep30-tang-divorce/timeline';
@@ -215,8 +216,7 @@ export const Root: React.FC = () => (
     </Folder>
     <Folder name="08-灯火史话风">
       <Still id="lamplight-relief-bake" component={ReliefBake} width={2600} height={1600} />
-      <Still id="ep52-cover-34" component={Ep52Cover34} width={1080} height={1440} />
-      <Still id="ep52-cover-43" component={Ep52Cover43} width={1440} height={1080} />
+      <Composition id="ep53-changan-curfew" component={Ep53Curfew} durationInFrames={EP53_DURATION} fps={EP53_FPS} width={EP53_W} height={EP53_H} />
       <Composition id="ep52-tang-beacon" component={Ep52Beacon} durationInFrames={EP52_DURATION} fps={EP52_FPS} width={EP52_W} height={EP52_H} />
       <Composition id="ep28-express-relay" component={Ep28Relay} durationInFrames={EP28_DURATION} fps={EP28_FPS} width={EP28_W} height={EP28_H} />
       <Still id="ep28-express-relay-cover-tall" component={Ep28CoverTall} width={1080} height={1440} />

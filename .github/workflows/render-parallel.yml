@@ -7,11 +7,15 @@ on:
       ep:
         description: 作品 ID（Composition id）
         required: true
-        default: ep52-tang-beacon
+        default: ep53-changan-curfew
       chunks:
         description: 分几段并行（1–20）
         required: true
         default: '20'
+      scale:
+        description: 放大倍数（1=1080p，2=4K）
+        required: true
+        default: '2'
 jobs:
   plan:
     runs-on: ubuntu-latest
@@ -49,7 +53,7 @@ jobs:
           mkdir -p public/audio/${{ inputs.ep }} out
           python3 -c "import wave;w=wave.open('public/audio/${{ inputs.ep }}/mix.wav','wb');w.setnchannels(2);w.setsampwidth(2);w.setframerate(48000);w.writeframes(bytes(4*48000));w.close()"
           npx remotion render src/index.ts ${{ inputs.ep }} out/part-$(printf %02d ${{ matrix.i }}).mp4 \
-            --frames=${{ matrix.a }}-${{ matrix.b }} --muted --codec=h264 --crf=18 --concurrency=$(nproc)
+            --frames=${{ matrix.a }}-${{ matrix.b }} --muted --codec=h264 --crf=18 --scale=${{ inputs.scale }} --concurrency=$(nproc)
       - uses: actions/upload-artifact@v4
         with: {name: 'part-${{ matrix.i }}', path: out/, retention-days: 3}
   join:
