@@ -47,7 +47,7 @@ jobs:
       - name: 渲染第 ${{ matrix.i }} 段（帧 ${{ matrix.a }}–${{ matrix.b }}）
         run: |
           mkdir -p public/audio/${{ inputs.ep }} out
-          ffmpeg -v error -f lavfi -i anullsrc=r=48000:cl=stereo -t 1 public/audio/${{ inputs.ep }}/mix.wav
+          python3 -c "import wave;w=wave.open('public/audio/${{ inputs.ep }}/mix.wav','wb');w.setnchannels(2);w.setsampwidth(2);w.setframerate(48000);w.writeframes(bytes(4*48000));w.close()"
           npx remotion render src/index.ts ${{ inputs.ep }} out/part-$(printf %02d ${{ matrix.i }}).mp4 \
             --frames=${{ matrix.a }}-${{ matrix.b }} --muted --codec=h264 --crf=18 --concurrency=4
       - uses: actions/upload-artifact@v4
@@ -58,6 +58,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with: {pattern: 'part-*', path: parts, merge-multiple: true}
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg >/dev/null
       - run: |
           ls parts | sort | sed "s#^#file 'parts/#; s#\$#'#" > list.txt
           ffmpeg -v error -f concat -safe 0 -i list.txt -c copy video.mp4
