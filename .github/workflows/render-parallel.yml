@@ -1,6 +1,5 @@
-# 并行渲染：Actions → Render parallel → Run workflow。
-# 画面拆成 N 段同时渲染（无声），audio job 同时在云端合成配乐+音效；join 无损拼接画面并合上声音，产物就是成片。
-# 仓库为私有（含配乐）。
+# 并行渲染（无声画面）：Actions → Render parallel → Run workflow。
+# 拆成 N 段同时渲染，最后无损拼接；声音（配乐+音效）在本地合成后再合进去，所以仓库里不放任何音频。
 name: Render parallel
 on:
   workflow_dispatch:
@@ -53,38 +52,16 @@ jobs:
             --frames=${{ matrix.a }}-${{ matrix.b }} --muted --codec=h264 --crf=18 --concurrency=$(nproc)
       - uses: actions/upload-artifact@v4
         with: {name: 'part-${{ matrix.i }}', path: out/, retention-days: 3}
-  audio:
-    runs-on: ubuntu-latest
-    env: {EP: '${{ inputs.ep }}'}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: {node-version: 22, cache: npm}
-      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg >/dev/null && pip3 install -q numpy
-      - run: npm ci
-      - name: 配乐 + 音效 + 混音
-        run: |
-          mkdir -p public/audio/$EP
-          NODE_OPTIONS=--max-old-space-size=4096 node audio/synth.mjs
-          node audio/episodes/$EP.mjs
-          npx tsx -e "import('./src/episodes/$EP/timeline.ts').then(m=>console.log(JSON.stringify({SFX:m.SFX,DURATION:m.DURATION,FPS:m.FPS})))" > sfx.json
-          python3 audio/episodes/${EP%%-*}_mix.py sfx.json mix.wav
-          ffmpeg -hide_banner -i mix.wav -af loudnorm=print_format=summary -f null - 2>&1 | grep -E "Input (Integrated|True Peak)"
-      - uses: actions/upload-artifact@v4
-        with: {name: 'mix', path: mix.wav, retention-days: 3}
   join:
-    needs: [render, audio]
+    needs: render
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
         with: {pattern: 'part-*', path: parts, merge-multiple: true}
-      - uses: actions/download-artifact@v4
-        with: {name: mix, path: .}
       - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg >/dev/null
       - run: |
           ls parts | sort | sed "s#^#file 'parts/#; s#\$#'#" > list.txt
           ffmpeg -v error -f concat -safe 0 -i list.txt -c copy video.mp4
-          ffmpeg -v error -i video.mp4 -i mix.wav -map 0:v -map 1:a -c:v copy -c:a aac -b:a 320k -shortest -movflags +faststart final.mp4
-          ffprobe -v error -show_entries stream=codec_type,duration -of csv=p=0 final.mp4
+          ffprobe -v error -show_entries format=duration -of csv=p=0 video.mp4
       - uses: actions/upload-artifact@v4
-        with: {name: '${{ inputs.ep }}-final', path: final.mp4, retention-days: 7}
+        with: {name: '${{ inputs.ep }}-video', path: video.mp4, retention-days: 7}
