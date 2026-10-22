@@ -96,8 +96,8 @@ def fog(zd, yimg, speed, dens, name):
     ms = n2.new("ShaderNodeMixShader"); l2.new(a.outputs[0], ms.inputs[0]); l2.new(tr.outputs[0], ms.inputs[1]); l2.new(e2.outputs[0], ms.inputs[2])
     out = n2.new("ShaderNodeOutputMaterial"); l2.new(ms.outputs[0], out.inputs[0])
     p.data.materials.append(m)
-fog(7.5, 0.33, 0.010, 0.38, "fogFar")
-fog(5.0, 0.24, -0.016, 0.28, "fogNear")
+fog(7.5, 0.47, 0.010, 0.26, "fogFar")
+fog(5.0, 0.40, -0.016, 0.16, "fogNear")
 # ---------- 镜头 ----------
 cd = bpy.data.cameras.new("cam"); cd.sensor_fit = "HORIZONTAL"; cd.sensor_width = 36; cd.lens = 36/(2*K)*1.07
 cam = bpy.data.objects.new("cam", cd); sc.collection.objects.link(cam); sc.camera = cam
@@ -111,7 +111,8 @@ for fc in cam.animation_data.action.fcurves:
 sc.render.engine = "CYCLES"; cy = sc.cycles; cy.device = "CPU"; cy.samples = int(os.environ.get("SPP", "16")); cy.use_denoising = False
 cy.max_bounces = 0; cy.transparent_max_bounces = 8; cy.use_adaptive_sampling = False
 sc.world = sc.world or bpy.data.worlds.new("w"); sc.world.use_nodes = True; sc.world.node_tree.nodes["Background"].inputs[1].default_value = 0
-sc.render.resolution_x, sc.render.resolution_y, sc.render.resolution_percentage = 1920, 1080, int(os.environ.get("PCT", "100"))
+RX = 1080 if AR < 1 else 1920
+sc.render.resolution_x, sc.render.resolution_y, sc.render.resolution_percentage = RX, int(round(RX/AR/2))*2, int(os.environ.get("PCT", "100"))
 sc.render.fps = FPS; sc.frame_start, sc.frame_end = 1, NF
 sc.view_settings.view_transform = "Standard"; sc.view_settings.look = "None"
 sc.render.image_settings.file_format = "PNG"; sc.render.use_motion_blur = True; sc.render.motion_blur_shutter = 0.4

@@ -2,7 +2,7 @@ name: Parallax 2.5D
 on:
   workflow_dispatch:
     inputs:
-      image: {description: 原图, required: true, default: blender/assets/ep54_64.png}
+      image: {description: 原图, required: true, default: blender/assets/ep54_64_user.jpg}
       script: {description: 镜头脚本, required: true, default: blender/parallax.py}
       frames: {description: 总帧数, required: true, default: '120'}
       chunks: {description: 并行段数, required: true, default: '12'}
