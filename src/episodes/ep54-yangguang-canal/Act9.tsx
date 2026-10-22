@@ -150,7 +150,7 @@ const Sc59: React.FC<{t: number}> = ({t}) => {
 const YEARS = ['大业元年', '大业二年', '大业三年', '大业四年', '大业五年', '大业六年', '大业七年', '大业八年', '大业九年', '大业十年'];
 const WORKS: [string, number, number, number][] = [
   ['营建东都', 300, 640, -6], ['通济渠', 560, 420, 5], ['邗沟', 820, 700, -3], ['永济渠', 1100, 460, 4], ['江南河', 1360, 720, -5],
-  ['长城', 1620, 430, 6], ['驰道', 380, 860, 3], ['西巡', 1240, 900, -4], ['灭吐谷浑', 1520, 600, 2], ['伐高句丽 ×3', 760, 900, -2], ['龙舟南巡', 980, 640, 5],
+  ['长城', 1710, 560, 6], ['驰道', 380, 860, 3], ['西巡', 1240, 900, -4], ['灭吐谷浑', 1470, 650, 2], ['伐高句丽 ×3', 760, 900, -2], ['龙舟南巡', 980, 640, 5],
 ];
 const Sc60: React.FC<{t: number}> = ({t}) => {
   const T = bt(8);
@@ -176,7 +176,7 @@ const Sc60: React.FC<{t: number}> = ({t}) => {
         ) : null;
       })}
       {/* 日历 */}
-      <div style={{position: 'absolute', left: 820, top: 160, width: 280, height: 220, perspective: 800}}>
+      <div style={{position: 'absolute', left: 1580, top: 250, width: 280, height: 220, perspective: 800}}>
         <div style={{position: 'absolute', inset: 0, background: '#f4ecd8', border: '5px solid #6a1a10', borderRadius: 10, boxShadow: '0 10px 30px rgba(0,0,0,0.6)'}}>
           <div style={{height: 54, background: '#b8281c', color: '#ffe6a8', fontFamily: LF.serif, fontWeight: 900, fontSize: 34, textAlign: 'center', lineHeight: '54px'}}>隋</div>
           <div style={{textAlign: 'center', fontFamily: LF.serif, fontWeight: 900, fontSize: 56, color: '#2a1408', marginTop: 40}}>{YEARS[idx]}</div>

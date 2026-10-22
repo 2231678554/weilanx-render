@@ -34,7 +34,7 @@ const Scene: React.FC = () => {
       {/* 左：墓志特写，「隨故煬帝墓誌」发光 */}
       <div style={{position: 'absolute', left: 0, top: 0, width: 960, height: 1080, overflow: 'hidden'}}>
         <div style={{position: 'absolute', left: 0, top: 0, width: 1920, height: 1080, transform: 'translate(480px, 560px) scale(2.3) translate(-480px, -905px)', transformOrigin: '0 0'}}>
-          <Tomb f={0} lit={() => 1} />
+          <Tomb f={0} lit={() => 1} halo={false} />
         </div>
       </div>
       <svg viewBox="0 0 1920 1080" width={1920} height={1080} style={{position: 'absolute', left: 0, top: 0}}>

@@ -139,7 +139,7 @@ const kneelOne = (x: number, s: number, facing: 1 | -1) => {
   };
 };
 
-export const Tomb: React.FC<{f: number; lit: (i: number) => number}> = ({f, lit}) => {
+export const Tomb: React.FC<{f: number; lit: (i: number) => number; halo?: boolean}> = ({f, lit, halo = true}) => {
   const bricks: React.ReactNode[] = [];
   for (let r = 0; r < 26; r++) {
     for (let c = -1; c < 15; c++) {
@@ -181,8 +181,8 @@ export const Tomb: React.FC<{f: number; lit: (i: number) => number}> = ({f, lit}
           const g = lit(i);
           return (
             <g key={i} transform={`translate(${x} ${y}) scale(1 ${sx})`}>
-              {g > 0 && <circle cx={0} cy={-12} r={30} fill="rgba(255,200,90,0.5)" opacity={g} />}
-              <text x={0} y={0} textAnchor="middle" fontFamily={LF.scroll} fontWeight={900} fontSize={40} fill={g > 0.3 ? `rgba(255,${200 + 30 * g},${100 + 40 * g},1)` : 'rgba(40,52,56,0.9)'}>
+              {halo && g > 0 && <circle cx={0} cy={-12} r={30} fill="rgba(255,200,90,0.5)" opacity={g} />}
+              <text x={0} y={0} textAnchor="middle" fontFamily={LF.scroll} fontWeight={900} fontSize={40} stroke={halo ? undefined : 'rgba(60,30,0,0.85)'} strokeWidth={halo ? 0 : 5} style={{paintOrder: 'stroke'}} fill={g > 0.3 ? `rgba(255,${200 + 30 * g},${100 + 40 * g},1)` : 'rgba(40,52,56,0.9)'}>
                 {c}
               </text>
             </g>
