@@ -150,10 +150,10 @@ def roof(z, w, d, name):
     r = bmesh.ops.create_cube(bm, size=1)
     for v in bm.verts:
         if v.co.z > 0: v.co.x *= 0.55; v.co.y *= 0.4
-        v.co.x *= w; v.co.y *= d; v.co.z *= 0.7
+        v.co.x *= 2 * w; v.co.y *= 2 * d; v.co.z *= 0.9
     # 屋檐四角上翘
     for v in bm.verts:
-        if v.co.z < 0 and abs(v.co.x) > w * 0.45 and abs(v.co.y) > d * 0.45: v.co.z += 0.35
+        if v.co.z < 0 and abs(v.co.x) > w * 0.9 and abs(v.co.y) > d * 0.9: v.co.z += 0.45
     me = bpy.data.meshes.new(name); bm.to_mesh(me); bm.free()
     o = bpy.data.objects.new(name, me); sc.collection.objects.link(o); o.location = (0, 0, z)
     bv = o.modifiers.new('bv', 'BEVEL'); bv.width = 0.05; bv.segments = 2
