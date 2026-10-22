@@ -36,7 +36,7 @@ jobs:
     needs: plan
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix: ${{ fromJson(needs.plan.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v4
@@ -54,8 +54,12 @@ jobs:
         run: |
           mkdir -p public/audio/${{ inputs.ep }} out
           python3 -c "import wave;w=wave.open('public/audio/${{ inputs.ep }}/mix.wav','wb');w.setnchannels(2);w.setsampwidth(2);w.setframerate(48000);w.writeframes(bytes(4*48000));w.close()"
-          npx remotion render src/index.ts ${{ inputs.ep }} out/part-$(printf %02d ${{ matrix.i }}).mp4 \
-            --frames=${{ matrix.a }}-${{ matrix.b }} --muted --codec=h264 --crf=18 --scale=${{ inputs.scale }} --concurrency=$(nproc)
+          for c in $(nproc) 2 1; do
+            npx remotion render src/index.ts ${{ inputs.ep }} out/part-$(printf %02d ${{ matrix.i }}).mp4 \
+              --frames=${{ matrix.a }}-${{ matrix.b }} --muted --codec=h264 --crf=18 --scale=${{ inputs.scale }} --concurrency=$c --timeout=120000 && exit 0
+            echo "并发 $c 失败，降并发重试"
+          done
+          exit 1
       - uses: actions/upload-artifact@v4
         with: {name: 'part-${{ matrix.i }}', path: out/, retention-days: 3}
   join:
