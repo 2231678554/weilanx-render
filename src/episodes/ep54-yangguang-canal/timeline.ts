@@ -63,9 +63,20 @@ export const SHOT: Record<string, [number, number]> = {
   s43: [340, 348],
   s44: [348, 356],
   s45: [356, 366],
+  s46: [366, 374],
+  s47: [374, 383],
+  s48: [383, 392],
+  s49: [392, 401],
+  s50: [401, 411],
+  s51: [411, 420],
+  s52: [420, 427],
+  s53: [427, 436],
+  s54: [436, 445],
+  s55: [445, 454],
+  s56: [454, 464],
 };
 /** 当前已做完的最后一屏 */
-export const LAST = 's45';
+export const LAST = 's56';
 export const MUSIC_BEAT = 0;
 export const DURATION = fbt(SHOT[LAST][1]);
 
@@ -159,6 +170,27 @@ export const CUES: [number, string | null, boolean?][] = [
   [350.5, '当年却是「〖立国不立民〗」。'],
   [356, '〔通济渠〕一段就征了〖一百多万人〗；', true],
   [359, '修永济渠时，男人不够用，就〖征妇女〗。'],
+  [366, '对内搞〖急政〗，对外他也闲不住：', true],
+  [369.5, '他要打通〔丝绸之路〕。'],
+  [374, '西突厥，他用〔挑拨内斗〕稳住了；', true],
+  [378, '挡路的，是青海草原上的〖吐谷浑〗。'],
+  [383, '吐谷浑是〔鲜卑慕容部〕的一支，', true],
+  [387, '名字来自第一代首领【慕容吐谷浑】。'],
+  [392, '公元 608 年，〖铁勒〗袭击吐谷浑，', true],
+  [396, '隋军趁机追击，斩首〔三千多〕。'],
+  [401, '第二年春天，杨广〔御驾亲征〕，', true],
+  [405, '四路人马把可汗【伏允】围在山里。'],
+  [411, '伏允让一个王〖假扮自己〗，', true],
+  [415, '自己带着几十个人〖溜了〗。'],
+  [420, '〔十几万部众〕投降。', true],
+  [427, '东西〔四千里〕、南北〔两千里〕，', true],
+  [431, '全成了〔隋朝的地盘〕。'],
+  [436, '杨广在这里设了〔西海、河源、鄯善、且末〕四郡，', true],
+  [440.5, '把〖轻罪犯人〗迁来屯田。'],
+  [445, '〔燕支山〕下，西域〔二十七国〕来朝，', true],
+  [449, '大隋的威望到了〔顶点〕。'],
+  [454, '可回程翻越〖大斗拔谷〗，', true],
+  [457.5, '风雪里，士兵〖死了十之二三〗。'],
 ];
 /** 第 5 屏：隋吞陈（屏内拍） */
 export const S5 = {swallow: 3.5, done: 5.2};
@@ -195,6 +227,16 @@ export const S41 = {turk: 2.4, chen: 4.6};
 export const S42 = {c1: 1.0, c2: 2.6, c3: 4.2, flash: 5.8};
 export const S43 = {gong: 0.8, down: 2.0, bow: 4.8};
 export const S45 = {card: 1.4, drum: 4.4};
+export const S46 = {line0: 0.6, line1: 5.6, card: 3.0};
+export const S47 = {clash: 1.6, camp: 4.4};
+export const S48 = {card: 0.8, mig0: 2.2, mig1: 8.0};
+export const S49 = {charge: 0.5, hit: 2.2, sui: 4.2, card: 5.2};
+export const S50 = {year: 1.0, f1: 4.0, f2: 4.9, f3: 5.8, f4: 6.7};
+export const S51 = {flee: 3.6};
+export const S52 = {card: 1.2};
+export const S53 = {paint0: 0.8, paint1: 3.6, card: 4.2};
+export const S54 = {j1: 0.8, j2: 1.6, j3: 2.4, j4: 3.2, cut: 4.4};
+export const S55 = {card: 4.0};
 
 /** 第 2 屏三张标签贴上去的拍（绝对拍） */
 export const TAG_BEATS = [7.5, 9.5, 11.5];
@@ -323,9 +365,21 @@ export const SFX: [string, number, number][] = [
   s('lowdrum', 348, 0.7), s('wind', 348.5, 0.45), s('lowdrum', 352, 0.6), s('wind', 352.5, 0.35),
   // 第 45 屏：慢镜头 + 重鼓
   s('lowdrum', 356, 0.8), s('bigdrum', 356 + S45.card, 0.9), s('stamp', 356 + S45.card, 0.5), s('steps', 357, 0.35), s('steps', 360, 0.35), s('bigdrum', 356 + S45.drum, 0.9), s('wind', 361, 0.35),
+  // 第四幕
+  s('drum', 366, 0.35), s('whoosh', 366 + S46.line0, 0.4), s('drum', 368, 0.3), s('stamp', 366 + S46.card, 0.4), s('drum', 370, 0.32), s('drum', 372, 0.3),
+  s('bigdrum', 374 + S47.clash, 0.9), s('clang', 374 + S47.clash, 0.5), s('drum', 376, 0.3), s('bigdrum', 374 + S47.camp, 0.9), s('lowdrum', 374 + S47.camp, 0.6), s('flag', 374 + S47.camp + 0.3, 0.4),
+  s('stamp', 383 + S48.card, 0.45), s('gallop', 383 + S48.mig0, 0.45), s('gallop', 386.6, 0.4), s('gallop', 389.2, 0.38), s('drum', 387, 0.3),
+  s('gallop', 392 + S49.charge, 0.55), s('impact', 392 + S49.hit, 0.6), s('bigdrum', 392 + S49.hit, 0.8), s('riser', 392 + S49.sui - 1, 0.4), s('gallop', 392 + S49.sui, 0.45), s('stamp', 392 + S49.card, 0.5), s('bigdrum', 392 + S49.card, 0.7),
+  s('stamp', 401 + S50.year, 0.45), s('drum', 403, 0.3), ...[S50.f1, S50.f2, S50.f3, S50.f4].flatMap((b) => [s('bigdrum', 401 + b, 0.95), s('thud', 401 + b, 0.5)]),
+  s('lowdrum', 411, 0.7), s('flag', 412, 0.4), s('flag', 413.5, 0.35), s('bigdrum', 411 + S51.flee, 0.9), s('gallop', 411 + S51.flee, 0.4), s('bigdrum', 417, 0.7),
+  s('shout', 420.4, 0.4), s('shout', 421.8, 0.35), s('stamp', 420 + S52.card, 0.45), s('steps', 423, 0.35), s('drum', 424, 0.3),
+  s('drum', 427, 0.3), s('scroll', 427 + S53.paint0, 0.4), s('glint', 427 + S53.paint1, 0.6), s('impact', 427 + S53.paint1, 0.5), s('bigdrum', 427 + S53.paint1, 0.95), s('stamp', 427 + S53.card, 0.5),
+  ...[S54.j1, S54.j2, S54.j3, S54.j4].map((b) => s('drum', 436 + b, 0.3)), s('whoosh', 436 + S54.cut, 0.35), s('steps', 441.5, 0.4), s('clink', 442, 0.3), s('steps', 443.5, 0.35),
+  s('drum', 445, 0.35), s('bell', 446, 0.5), s('drum', 447, 0.3), s('dang', 445 + S55.card, 0.7), s('bigdrum', 445 + S55.card, 0.8), s('drum', 451, 0.3), s('bell', 452, 0.4),
+  s('lowdrum', 454, 0.7), s('wind', 454, 0.6), s('wind', 457, 0.6), s('wind', 460, 0.55), s('thud', 459, 0.35),
 ];
 /** 配乐压低：[起拍, 止拍, 增益] */
-export const DUCK: [number, number, number][] = [[144 + S19.out - 0.15, 144 + S19.out + 1, 0.05], [248, 256, 0.32], [348, 366, 0.34]];
+export const DUCK: [number, number, number][] = [[144 + S19.out - 0.15, 144 + S19.out + 1, 0.05], [248, 256, 0.32], [348, 366, 0.34], [454, 464, 0.3]];
 /** 环境声：运河水声（第 1–3 屏），[文件, 起帧, 止帧, 音量] */
 export const AMBIENCE: [string, number, number, number][] = [
   [`${A}/water.wav`, 0, fbt(SHOT.s3[0]) + S3.zoomA, 0.22],

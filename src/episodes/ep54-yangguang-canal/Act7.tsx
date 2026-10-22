@@ -33,11 +33,11 @@ const SOLDIER: Partial<RigProps> = {robe: '#7a5a3a', robeD: '#5a4028', pants: '#
 const GUARD: Partial<RigProps> = {robe: '#9a2e26', robeD: '#6e201a', pants: '#2a2020', hem: 90};
 const PEASANT: Partial<RigProps> = {robe: '#8a7458', robeD: '#66543e', pants: '#4a3e30', hem: 50, hat: 'none', hair: '#2a2018'};
 const PEASANT2: Partial<RigProps> = {robe: '#6a6a58', robeD: '#4e4e40', pants: '#3e3a30', hem: 50, hat: 'none', hair: '#1e1810'};
-const WOMAN: Partial<RigProps> = {robe: '#7a6448', robeD: '#5a4834', pants: '#3a3026', hem: 150, hat: 'bun', hair: '#1e1610', skirt: true};
-const WOMAN2: Partial<RigProps> = {robe: '#5e6a5a', robeD: '#444e42', pants: '#3a3026', hem: 150, hat: 'bun', hair: '#1e1610', skirt: true};
+const WOMAN: Partial<RigProps> = {robe: '#8a5a48', robeD: '#6a4434', pants: '#3a3026', hem: 60, hat: 'bun', hair: '#1e1610'};
+const WOMAN2: Partial<RigProps> = {robe: '#5e6a5a', robeD: '#444e42', pants: '#3a3026', hem: 60, hat: 'bun', hair: '#1e1610'};
 
 /* ═════════ 第 41 屏：北有突厥铁骑（草原骑兵剪影），南有陈朝旧族（江南城楼上的世家老者） ═════════ */
-const Rider: React.FC<{f: number; x: number; y: number; s: number; seed: number}> = ({f, x, y, s, seed}) => {
+export const Rider: React.FC<{f: number; x: number; y: number; s: number; seed: number}> = ({f, x, y, s, seed}) => {
   const bob = Math.sin(f * 0.5 + seed) * 6 * s;
   const back = mountBack(x, y, s, 'horse');
   const pose = ridePose([back[0], back[1] + bob], s, 1);
@@ -89,22 +89,22 @@ const Sc41: React.FC<{t: number}> = ({t}) => {
         <g opacity={turk} style={{filter: 'brightness(0.18) sepia(0.6)'}}>
           {Array.from({length: 7}, (_, i) => {
             const [x, y] = tx(i);
-            return <Rider key={i} f={t} x={x} y={y + (1 - turk) * 30} s={0.15} seed={i * 1.7} />;
+            return <Rider key={i} f={t} x={x} y={y + (1 - turk) * 30} s={0.23} seed={i * 1.7} />;
           })}
         </g>
         {turk > 0 && (() => {
           const [x, y] = tx(3);
-          return <text x={x} y={y - 120} textAnchor="middle" fontFamily={LF.serif} fontWeight={900} fontSize={52} fill="#ff9a80" stroke="#1a0a04" strokeWidth={6} paintOrder="stroke" opacity={turk}>突厥</text>;
+          return <text x={x} y={y - 175} textAnchor="middle" fontFamily={LF.serif} fontWeight={900} fontSize={60} fill="#ff9a80" stroke="#1a0a04" strokeWidth={6} paintOrder="stroke" opacity={turk}>突厥</text>;
         })()}
         <g opacity={chen} transform={`translate(0 ${(1 - chen) * 30})`}>
-          <GateTower x={jx} y={jy} s={0.42} />
+          <GateTower x={jx} y={jy} s={0.6} />
           {[-1, 0, 1].map((d, i) => {
-            const s = 0.13;
-            const x = jx + d * 46;
-            const p = standPose(x, jy - 0.42 * 182, s, -1);
+            const s = 0.19;
+            const x = jx + d * 66;
+            const p = standPose(x, jy - 0.6 * 182, s, -1);
             return <g key={d}>{R(i === 1 ? ELDER2 : ELDER, {...p, handN: [x - 22 * s, p.hip[1] - 60 * s], handF: [x - 16 * s, p.hip[1] - 54 * s]}, s, {face: 'stern'})}</g>;
           })}
-          <text x={jx} y={jy + 64} textAnchor="middle" fontFamily={LF.serif} fontWeight={900} fontSize={46} fill="#b8f0b0" stroke="#0a1a08" strokeWidth={6} paintOrder="stroke">陈朝旧族</text>
+          <text x={jx} y={jy + 74} textAnchor="middle" fontFamily={LF.serif} fontWeight={900} fontSize={56} fill="#b8f0b0" stroke="#0a1a08" strokeWidth={6} paintOrder="stroke">陈朝旧族</text>
         </g>
       </Svg>
       <Label3 cam={cam} at={[108.94, 34.27]} name="长安" lift={16} size={32} o={0.7} color="#e8dcc0" />
@@ -213,7 +213,7 @@ const Sc42: React.FC<{t: number}> = ({t}) => {
           const cx = [330, 950, 1600][i];
           const pop = on[i];
           return pop > 0 ? (
-            <text key={ch} x={cx} y={i === 0 ? 400 : 330} textAnchor="middle" fontFamily={LF.serif} fontWeight={900} fontSize={170} fill="#ffe0a0" stroke="#2a1606" strokeWidth={10} paintOrder="stroke" opacity={pop} transform={`translate(${cx} 300) scale(${lerp(1.6, 1, easeOutBack(pop))}) translate(${-cx} -300)`}>
+            <text key={ch} x={cx} y={i < 2 ? 1010 : 330} textAnchor="middle" fontFamily={LF.serif} fontWeight={900} fontSize={170} fill="#ffe0a0" stroke="#2a1606" strokeWidth={10} paintOrder="stroke" opacity={pop} transform={`translate(${cx} ${i < 2 ? 950 : 270}) scale(${lerp(1.6, 1, easeOutBack(pop))}) translate(${-cx} ${i < 2 ? -950 : -270})`}>
               {ch}
             </text>
           ) : null;
@@ -325,7 +325,7 @@ const Sc43: React.FC<{t: number}> = ({t}) => {
 const Lying: React.FC<{x: number; y: number; s: number; look: Partial<RigProps>; dir: 1 | -1; seed: number}> = ({x, y, s, look, dir, seed}) => {
   const hip: P = [x, y - 30 * s];
   const neck: P = [x + dir * 200 * s, y - 40 * s];
-  return R(look, {hip, neck, facing: dir, handN: [neck[0] + dir * 40 * s, y], handF: [hip[0] + dir * 60 * s, y - 4 * s], footN: [x - dir * 200 * s, y], footF: [x - dir * 190 * s, y - 10 * s], kneeN: [x - dir * 100 * s, y - 40 * s], kneeF: [x - dir * 96 * s, y - 20 * s], headAt: [neck[0] + dir * 50 * s, y - 50 * s]}, s, {face: rnd(seed) > 0.5 ? 'sleepy' : 'pain'});
+  return (<g><ellipse cx={x + dir * 20 * s} cy={y + 4 * s} rx={260 * s} ry={22 * s} fill="#140c06" opacity={0.6} />{R({...look, hem: 24}, {hip, neck, facing: dir, handN: [neck[0] + dir * 40 * s, y], handF: [hip[0] + dir * 60 * s, y - 4 * s], footN: [x - dir * 200 * s, y], footF: [x - dir * 190 * s, y - 10 * s], kneeN: [x - dir * 100 * s, y - 40 * s], kneeF: [x - dir * 96 * s, y - 20 * s], headAt: [neck[0] + dir * 50 * s, y - 50 * s]}, s, {face: rnd(seed) > 0.5 ? 'sleepy' : 'pain'})}</g>);
 };
 const Sc44: React.FC<{t: number}> = ({t}) => {
   const k = easeInOut(seg(t, 1.6, 6.5));

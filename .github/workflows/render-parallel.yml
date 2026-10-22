@@ -44,8 +44,8 @@ jobs:
         with: {node-version: 22, cache: npm}
       - name: 字体
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq fonts-noto-cjk fonts-noto-color-emoji fonts-liberation >/dev/null
+          timeout 60 sudo apt-get update -qq || true
+          for i in 1 2 3; do timeout 150 sudo apt-get install -y -qq fonts-noto-cjk fonts-noto-color-emoji fonts-liberation >/dev/null && break; done
           mkdir -p ~/.config/fontconfig && cp .github/render/fonts.conf ~/.config/fontconfig/fonts.conf && fc-cache -f >/dev/null
       - run: npm ci
       - name: 渲染第 ${{ matrix.i }} 段（帧 ${{ matrix.a }}–${{ matrix.b }}）
@@ -62,7 +62,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with: {pattern: 'part-*', path: parts, merge-multiple: true}
-      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg >/dev/null
+      - run: (timeout 60 sudo apt-get update -qq || true); for i in 1 2 3; do timeout 150 sudo apt-get install -y -qq ffmpeg >/dev/null && break; done
       - run: |
           ls parts | sort | sed "s#^#file 'parts/#; s#\$#'#" > list.txt
           ffmpeg -v error -f concat -safe 0 -i list.txt -c copy video.mp4

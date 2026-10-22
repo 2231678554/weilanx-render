@@ -26,8 +26,8 @@ jobs:
         with: {node-version: 22, cache: npm}
       - name: 字体
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq fonts-noto-cjk fonts-noto-color-emoji fonts-liberation >/dev/null
+          timeout 60 sudo apt-get update -qq || true
+          for i in 1 2 3; do timeout 150 sudo apt-get install -y -qq fonts-noto-cjk fonts-noto-color-emoji fonts-liberation >/dev/null && break; done
           mkdir -p ~/.config/fontconfig && cp .github/render/fonts.conf ~/.config/fontconfig/fonts.conf && fc-cache -f >/dev/null
       - run: npm ci
       - run: |
@@ -42,6 +42,6 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with: {pattern: 'f-*', path: s, merge-multiple: true}
-      - run: sudo apt-get install -y -qq imagemagick >/dev/null; ls s; montage s/*.jpg -tile 2x -geometry 960x540+4+4 sheet.jpg
+      - run: for i in 1 2 3; do timeout 150 sudo apt-get install -y -qq imagemagick >/dev/null && break; done; ls s; montage -label '%t' -pointsize 30 $(ls s/*.jpg | sort -V) -tile 2x -geometry 960x540+4+4 sheet.jpg
       - uses: actions/upload-artifact@v4
         with: {name: stills-sheet, path: 'sheet.jpg', retention-days: 2}
