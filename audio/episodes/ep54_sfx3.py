@@ -33,3 +33,20 @@ save('shout',x)
 # doorslam：沉重宫门合拢，低频闷响 + 木头 + 灰尘
 d=1.6; tt=t(d); x=np.sin(2*np.pi*(55-15*tt)*tt)*np.exp(-5*tt)*1.4+bp(rng.standard_normal(len(tt)),80,600)*np.exp(-9*tt)+0.5*np.sin(2*np.pi*170*tt)*np.exp(-14*tt)
 x+=0.25*bp(rng.standard_normal(len(tt)),2000,8000)*np.exp(-((tt-0.25)/0.25)**2); save('doorslam',x)
+# ── 第 17–22 屏 ──
+# creak：木门吱呀
+d=0.9; tt=t(d); f=300+120*np.sin(2*np.pi*1.3*tt)+60*rng.standard_normal(len(tt)).cumsum()/SR*40
+x=np.sign(np.sin(2*np.pi*np.cumsum(f)/SR))*0.4; x=bp(x*(np.sin(np.pi*tt/d)**1.5),400,3000)+0.3*bp(rng.standard_normal(len(tt)),800,2500)*np.sin(np.pi*tt/d); save('creak',x)
+# puff：吹灭蜡烛
+d=0.45; tt=t(d); x=bp(rng.standard_normal(len(tt)),200,2500)*np.exp(-((tt-0.1)/0.08)**2); save('puff',x)
+# lowdrum：低沉一声鼓
+d=1.8; tt=t(d); x=np.sin(2*np.pi*(48-10*tt)*tt)*np.exp(-2.6*tt)*1.3+bp(rng.standard_normal(len(tt)),40,300)*np.exp(-12*tt)*0.5; save('lowdrum',x)
+# build：城池拔地而起，地底隆隆 + 一串木石落定
+d=3.2; tt=t(d); x=bp(rng.standard_normal(len(tt)),30,220)*np.clip(tt/0.4,0,1)*np.exp(-0.7*tt)*1.2
+for k in range(9):
+    i=int((0.25+k*0.26)*SR); n=int(0.25*SR); u=np.arange(n)/SR
+    x[i:i+n]+=(np.sin(2*np.pi*(110+k*12)*u)*np.exp(-20*u)+0.5*bp(rng.standard_normal(n),300,2500)*np.exp(-35*u))*(0.6+0.05*k)
+save('build',x)
+# growl：肚子「咕～」
+d=1.0; tt=t(d); f=95+30*np.sin(2*np.pi*2.2*tt)+20*np.sin(2*np.pi*7*tt); x=np.sin(2*np.pi*np.cumsum(f)/SR)*(np.sin(np.pi*tt/d)**0.8)*(0.6+0.4*np.sin(2*np.pi*13*tt))
+x+=0.3*bp(rng.standard_normal(len(tt)),80,400)*np.sin(np.pi*tt/d); save('growl',x)

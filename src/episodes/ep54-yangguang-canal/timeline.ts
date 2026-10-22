@@ -33,9 +33,15 @@ export const SHOT: Record<string, [number, number]> = {
   s14: [104, 112],
   s15: [112, 120],
   s16: [120, 128],
+  s17: [128, 136],
+  s18: [136, 144],
+  s19: [144, 152],
+  s20: [152, 160],
+  s21: [160, 168],
+  s22: [168, 176],
 };
 /** 当前已做完的最后一屏 */
-export const LAST = 's16';
+export const LAST = 's22';
 export const MUSIC_BEAT = 0;
 export const DURATION = fbt(SHOT[LAST][1]);
 
@@ -73,6 +79,18 @@ export const CUES: [number, string | null, boolean?][] = [
   [114.5, '逼得爬到宫外树上〖大喊〗。'],
   [120, '杨素一句话：', true],
   [122, '「他被〖疯鬼附身〗了，救不回来了。」'],
+  [128, '四年后，隋文帝在〔仁寿宫〕病重。', true],
+  [130.5, '杨广对〔宣华夫人〕〖无礼〗，被她挣脱了。'],
+  [136, '隋文帝〖悔青了肠子〗：', true],
+  [138.5, '「召我儿——是〔杨勇〕！」'],
+  [144, '消息先到了〔杨素〕手里。', true],
+  [146.5, '杨广派亲信〔张衡〕进了寝殿，没多久，〖皇帝驾崩〗。'],
+  [152, '当晚，他就占了〔宣华夫人〕；', true],
+  [154.5, '随后〖假传诏书〗，赐死了亲哥哥。'],
+  [160, '杨广登基后，第一件大工程：', true],
+  [162.5, '营建〔东都洛阳〕。'],
+  [168, '放着长安不住，为啥要建洛阳？', true],
+  [170.5, '因为——〖饭不够吃〗！'],
 ];
 /** 第 5 屏：隋吞陈（屏内拍） */
 export const S5 = {swallow: 3.5, done: 5.2};
@@ -82,6 +100,12 @@ export const S13 = {bump1: 1.3, bump2: 2.1};
 export const S14 = {edict: 0.8, year: 3.0, crown: 3.4};
 export const S15 = {shout: 1.8, turn: 5.0};
 export const S16 = {circle: 2.3, wave: 4.4, close: 5.0};
+export const S17 = {free: 3.0, year: 6.0};
+export const S18 = {point: 3.0};
+export const S19 = {enter: 2.6, shut: 4.4, out: 6.2, note: 4.0};
+export const S20 = {cut: 4};
+export const S21 = {rise: 2.6};
+export const S22 = {growl: 3.4, clash: 4.6};
 
 /** 第 2 屏三张标签贴上去的拍（绝对拍） */
 export const TAG_BEATS = [7.5, 9.5, 11.5];
@@ -145,7 +169,25 @@ export const SFX: [string, number, number][] = [
   s('shout', 112 + S15.shout, 0.85), s('drum', 112 + S15.turn, 0.5),
   // 第 16 屏：关门闷响
   s('drum', 120, 0.3), s('whoosh', 120 + S16.close, 0.4), s('doorslam', 120 + S16.close + 1.1, 1), s('bigdrum', 120 + S16.close + 1.1, 0.7),
+  // 第 17 屏：低沉鼓点，快切
+  ...[128, 129, 130, 131].map((b) => s('drum', b, 0.4)), s('brush', 128 + S17.free - 0.4, 0.6), s('whoosh', 128 + S17.free, 0.6),
+  s('bigdrum', 132, 0.6), s('drum', 133, 0.35), s('drum', 134, 0.35), s('stamp', 128 + S17.year, 0.8),
+  // 第 18 屏：慢镜头 + 重鼓 + 白闪
+  s('riser', 136 + S18.point - 1.6, 0.4), s('bigdrum', 136 + S18.point, 1), s('impact', 136 + S18.point, 0.9),
+  s('brush', 136 + S18.point + 0.8, 0.5), s('brush', 136 + S18.point + 2, 0.45), s('brush', 136 + S18.point + 3.2, 0.4),
+  // 第 19 屏：门合上、烛光熄灭 → 静音 1 拍 → 一声低鼓
+  s('scroll', 144.8, 0.35), s('creak', 144 + S19.enter - 0.3, 0.6), s('creak', 144 + S19.shut, 0.5), s('thud', 144 + S19.shut + 1.6, 0.7),
+  s('puff', 144 + S19.out, 0.6), s('lowdrum', 144 + S19.out + 1, 1),
+  // 第 20 屏：推门、金盒；盖章声；铁栅栏
+  s('creak', 152.1, 0.5), s('clink', 153.8, 0.5), s('drum', 155, 0.35),
+  s('stamp', 152 + S20.cut + 0.9, 1), s('bigdrum', 152 + S20.cut + 0.9, 0.8), s('clang', 152 + S20.cut + 1.8, 0.45), s('thud', 152 + S20.cut + 3.4, 0.6),
+  // 第 21 屏：建筑生长
+  s('drum', 160, 0.35), s('build', 160 + S21.rise, 0.9), s('stamp', 160 + S21.rise + 2.4, 0.7),
+  // 第 22 屏：「咕」肚子叫 + 重鼓
+  s('drum', 168, 0.3), s('growl', 168 + S22.growl, 0.9), s('clink', 168 + S22.clash, 0.9), s('bigdrum', 168 + S22.clash, 1), s('impact', 168 + S22.clash, 0.6),
 ];
+/** 配乐压低：[起拍, 止拍, 增益] */
+export const DUCK: [number, number, number][] = [[144 + S19.out - 0.15, 144 + S19.out + 1, 0.05]];
 /** 环境声：运河水声（第 1–3 屏），[文件, 起帧, 止帧, 音量] */
 export const AMBIENCE: [string, number, number, number][] = [
   [`${A}/water.wav`, 0, fbt(SHOT.s3[0]) + S3.zoomA, 0.22],
