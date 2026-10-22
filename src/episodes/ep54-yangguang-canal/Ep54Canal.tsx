@@ -1,0 +1,35 @@
+import React from 'react';
+import {AbsoluteFill, Audio, staticFile, useCurrentFrame} from 'remotion';
+import {clamp01} from '../../library/anim';
+import {panelAt} from '../../library/lamplight/scenes';
+import {Embers, Flash, Narration, NightBg, TitleCard} from '../../library/lamplight/stage';
+import {L, LF} from '../../library/lamplight/theme';
+import {Opening} from './Opening';
+import {CUES, fbt, SHOT} from './timeline';
+
+/** ep54 杨广与大运河 */
+export const Ep54Canal: React.FC = () => {
+  const f = useCurrentFrame();
+  const titleAt = fbt(SHOT.title[0]);
+  const panel = panelAt(CUES, fbt, f);
+  const inTitle = f >= titleAt;
+  return (
+    <AbsoluteFill style={{background: L.night, overflow: 'hidden'}}>
+      <Audio src={staticFile('audio/ep54-yangguang-canal/mix.wav')} />
+      {!inTitle && <Opening f={f} />}
+      {inTitle && (
+        <>
+          <NightBg f={f} glow={[50, 56]} strength={1.3} />
+          <Embers f={f} x={960} y={1000} n={26} spread={1200} rise={600} seed={4} />
+          <TitleCard f={f} at={titleAt} kicker="灯火史话 · 隋代运河" title="杨广与大运河" pill="修这条河，到底为了什么？" size={200} perChar={2} />
+        </>
+      )}
+      {panel && <Narration key={panel[0].b} f={f} lines={panel.map(({b, text}) => ({at: b === 0 ? -40 : fbt(b), text}))} size={64} y={96} perChar={2} />}
+      {!inTitle && f >= fbt(SHOT.s2[0]) && (
+        <div style={{position: 'absolute', left: 0, right: 0, bottom: 26, textAlign: 'center', fontFamily: LF.label, fontSize: 24, color: L.inkDim, opacity: clamp01((f - fbt(SHOT.s2[0])) / 10)}}>人物和场面都是示意</div>
+      )}
+      <Flash f={f} at={0} dur={8} peak={0.85} />
+      <Flash f={f} at={titleAt} />
+    </AbsoluteFill>
+  );
+};
