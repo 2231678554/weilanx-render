@@ -9,7 +9,7 @@ sc.frame_start, sc.frame_end = 1, N
 sc.render.fps = FPS
 sc.render.engine = 'CYCLES'
 sc.cycles.device = 'CPU'
-sc.cycles.samples = 64
+sc.cycles.samples = 48
 sc.cycles.use_adaptive_sampling = True
 sc.cycles.use_denoising = True
 sc.cycles.denoiser = 'OPENIMAGEDENOISE'
@@ -19,7 +19,7 @@ sc.cycles.caustics_refractive = False
 sc.render.resolution_x, sc.render.resolution_y = 1920, 1080
 sc.render.resolution_percentage = 100
 sc.view_settings.view_transform = 'AgX'
-sc.view_settings.look = 'AgX - Punchy'
+sc.view_settings.look = 'AgX - Medium High Contrast'
 sc.render.image_settings.file_format = 'PNG'
 
 def mat(name, color, rough=0.5, metal=0.0, emit=None, es=0.0):
@@ -45,42 +45,56 @@ def cube(name, loc, scale, m, bevel=0.0):
         bv = o.modifiers.new('bv', 'BEVEL'); bv.width = bevel; bv.segments = 2
     return put(o, m)
 
-# ── 天空：低太阳的暮色 ──
+# ── 天空：自己调的暮色渐变（地平线橙 → 粉紫 → 深蓝紫）+ 落日 ──
 w = bpy.data.worlds.new('W'); sc.world = w; w.use_nodes = True
 nt = w.node_tree; nt.nodes.clear()
-sky = nt.nodes.new('ShaderNodeTexSky'); sky.sky_type = 'NISHITA'
-sky.sun_elevation = math.radians(2.2); sky.sun_rotation = math.radians(200)
-sky.air_density = 2.2; sky.dust_density = 6.0; sky.sun_size = math.radians(2.2); sky.sun_intensity = 0.6
-bg = nt.nodes.new('ShaderNodeBackground'); bg.inputs['Strength'].default_value = 0.55
+tc = nt.nodes.new('ShaderNodeTexCoord'); sep = nt.nodes.new('ShaderNodeSeparateXYZ')
+nt.links.new(tc.outputs['Generated'], sep.inputs[0])
+ramp = nt.nodes.new('ShaderNodeValToRGB'); cr = ramp.color_ramp
+cr.elements[0].position = 0.0; cr.elements[0].color = (*srgb('#3a2a3a'), 1)
+cr.elements[1].position = 1.0; cr.elements[1].color = (*srgb('#1c1a3a'), 1)
+for p, c in [(0.5, '#ffb070'), (0.53, '#f08a60'), (0.6, '#b8607a'), (0.72, '#5a3a6a')]:
+    e = cr.elements.new(p); e.color = (*srgb(c), 1)
+ma = nt.nodes.new('ShaderNodeMath'); ma.operation = 'MULTIPLY_ADD'; ma.inputs[1].default_value = 0.5; ma.inputs[2].default_value = 0.5
+nt.links.new(sep.outputs['Z'], ma.inputs[0]); nt.links.new(ma.outputs[0], ramp.inputs[0])
+bg = nt.nodes.new('ShaderNodeBackground'); bg.inputs['Strength'].default_value = 1.6
 out = nt.nodes.new('ShaderNodeOutputWorld')
-nt.links.new(sky.outputs[0], bg.inputs[0]); nt.links.new(bg.outputs[0], out.inputs[0])
-
-sun_dir = Vector((math.sin(math.radians(200)) * math.cos(math.radians(2.2)), math.cos(math.radians(200)) * math.cos(math.radians(2.2)), math.sin(math.radians(2.2))))
+nt.links.new(ramp.outputs[0], bg.inputs[0]); nt.links.new(bg.outputs[0], out.inputs[0])
+SUN = Vector((-30, 420, 9))
+bpy.ops.mesh.primitive_uv_sphere_add(radius=11, location=SUN); sd = bpy.context.object
+sm = mat('sun', srgb('#ffd8a0'), 1, 0, srgb('#ffcf90'), 12.0); sd.data.materials.append(sm)
+sd.visible_shadow = False
 bpy.ops.object.light_add(type='SUN')
-sun = bpy.context.object; sun.data.energy = 2.2; sun.data.color = srgb('#ffb070'); sun.data.angle = math.radians(3)
-sun.rotation_euler = (-sun_dir).to_track_quat('-Z', 'Y').to_euler()
-# 天光补一点冷色
+sun = bpy.context.object; sun.data.energy = 3.0; sun.data.color = srgb('#ffa060'); sun.data.angle = math.radians(4)
+sun.rotation_euler = (Vector((0, 0, 0)) - SUN).normalized().to_track_quat('-Z', 'Y').to_euler()
+# 机位一侧的暖色补光 + 头顶冷色天光，避免逆光时船身全黑
+bpy.ops.object.light_add(type='AREA', location=(12, -30, 10)); f1 = bpy.context.object
+f1.data.energy = 9000; f1.data.size = 20; f1.data.color = srgb('#ff9a7a')
+f1.rotation_euler = (Vector((-2, 0, 3)) - f1.location).to_track_quat('-Z', 'Y').to_euler()
 bpy.ops.object.light_add(type='AREA', location=(0, 0, 40)); fill = bpy.context.object
-fill.data.energy = 6000; fill.data.size = 80; fill.data.color = srgb('#6a6aa8')
+fill.data.energy = 5000; fill.data.size = 80; fill.data.color = srgb('#7a6ab8')
 
-# ── 水面：海洋修改器 + 反光材质 ──
-bpy.ops.mesh.primitive_plane_add(size=2); water = bpy.context.object; water.name = 'water'
-oc = water.modifiers.new('ocean', 'OCEAN')
-oc.geometry_mode = 'GENERATE'; oc.spatial_size = 60; oc.resolution = 14; oc.repeat_x = 6; oc.repeat_y = 6
-oc.wave_scale = 0.35; oc.choppiness = 0.9; oc.wind_velocity = 6; oc.wave_alignment = 0.4
-oc.time = 0.0; oc.keyframe_insert('time', frame=1); oc.time = 5.0; oc.keyframe_insert('time', frame=N)
-water.location = (0, 60, 0)
-wm = bpy.data.materials.new('water'); wm.use_nodes = True
-b = wm.node_tree.nodes['Principled BSDF']
-b.inputs['Base Color'].default_value = (*srgb('#16303a'), 1); b.inputs['Roughness'].default_value = 0.06
-b.inputs['IOR'].default_value = 1.33; b.inputs['Specular IOR Level'].default_value = 0.7
+# ── 水面：大平面 + 动态噪声凹凸，反射天空和落日 ──
+bpy.ops.mesh.primitive_plane_add(size=1200, location=(0, 300, 0)); water = bpy.context.object; water.name = 'water'
+wm = bpy.data.materials.new('water'); wm.use_nodes = True; wn = wm.node_tree
+b = wn.nodes['Principled BSDF']
+b.inputs['Base Color'].default_value = (*srgb('#141c2a'), 1); b.inputs['Roughness'].default_value = 0.04
+b.inputs['IOR'].default_value = 1.33
+tco = wn.nodes.new('ShaderNodeTexCoord'); mp = wn.nodes.new('ShaderNodeMapping'); mp.inputs['Scale'].default_value = (0.6, 0.18, 1)
+wn.links.new(tco.outputs['Object'], mp.inputs[0])
+nz = wn.nodes.new('ShaderNodeTexNoise'); nz.noise_dimensions = '4D'; nz.inputs['Scale'].default_value = 2.2; nz.inputs['Detail'].default_value = 6
+wn.links.new(mp.outputs[0], nz.inputs['Vector'])
+nz.inputs['W'].default_value = 0; nz.inputs['W'].keyframe_insert('default_value', frame=1)
+nz.inputs['W'].default_value = 1.6; nz.inputs['W'].keyframe_insert('default_value', frame=N)
+bump = wn.nodes.new('ShaderNodeBump'); bump.inputs['Strength'].default_value = 0.35; bump.inputs['Distance'].default_value = 0.1
+wn.links.new(nz.outputs['Fac'], bump.inputs['Height']); wn.links.new(bump.outputs['Normal'], b.inputs['Normal'])
 water.data.materials.append(wm)
-for fc in water.animation_data.action.fcurves:
+for fc in wm.node_tree.animation_data.action.fcurves:
     for k in fc.keyframe_points: k.interpolation = 'LINEAR'
 
 # ── 远山：三层噪声起伏，越远越淡（靠雾区分） ──
-mtn_m = [mat('m%d' % i, srgb(c), 0.9) for i, c in enumerate(['#3a2e48', '#4a3a58', '#5e4a66'])]
-for i, (dist, h, sx) in enumerate([(70, 9, 1.0), (110, 16, 1.3), (160, 26, 1.6)]):
+mtn_m = [mat('m%d' % i, srgb(c), 0.95, 0, srgb(c), [0.0, 0.25, 0.6][i]) for i, c in enumerate(['#2a2032', '#5a3a58', '#9a6a78'])]
+for i, (dist, h, sx) in enumerate([(90, 10, 1.0), (170, 22, 1.4), (280, 40, 1.9)]):
     bpy.ops.mesh.primitive_grid_add(x_subdivisions=160, y_subdivisions=24, size=1)
     g = bpy.context.object; g.scale = (260 * sx, 30, 1); g.location = (0, dist, -0.5)
     bpy.ops.object.transform_apply(scale=True)
@@ -94,8 +108,9 @@ for i, (dist, h, sx) in enumerate([(70, 9, 1.0), (110, 16, 1.3), (160, 26, 1.6)]
 lac = mat('lac', srgb('#7a1a12'), 0.35)
 red = mat('red', srgb('#a8281c'), 0.5)
 gold = mat('gold', srgb('#d8a040'), 0.3, 0.9)
+tile = mat('tile', srgb('#2a2630'), 0.55)
 wood = mat('wood', srgb('#4a2a18'), 0.6)
-win = mat('win', srgb('#2a1a10'), 0.6, 0, srgb('#ffb050'), 6.0)
+win = mat('win', srgb('#2a1a10'), 0.6, 0, srgb('#ffb050'), 1.6)
 boat = bpy.data.objects.new('boat', None); sc.collection.objects.link(boat)
 def kid(o): o.parent = boat; return o
 # 船身：压扁的半个椭球
@@ -142,7 +157,7 @@ def roof(z, w, d, name):
     me = bpy.data.meshes.new(name); bm.to_mesh(me); bm.free()
     o = bpy.data.objects.new(name, me); sc.collection.objects.link(o); o.location = (0, 0, z)
     bv = o.modifiers.new('bv', 'BEVEL'); bv.width = 0.05; bv.segments = 2
-    o.data.materials.append(gold); return kid(o)
+    o.data.materials.append(tile); return kid(o)
 tiers = [(0.55, 1.5, 12.0, 3.2), (2.4, 1.3, 9.0, 2.7), (4.0, 1.2, 6.2, 2.2)]
 for i, (z0, hgt, wdt, dep) in enumerate(tiers):
     kid(cube('wall%d' % i, (0, 0, z0 + hgt / 2), (wdt / 2, dep / 2, hgt / 2), red, 0.03))
@@ -159,12 +174,12 @@ for sx in (-1, 1):
 roof(7.7, 2.3, 1.4, 'roofTop')
 bpy.ops.mesh.primitive_uv_sphere_add(radius=0.22, location=(0, 0, 8.4)); put(bpy.context.object, gold); kid(bpy.context.object)
 # 灯笼（自发光）沿屋檐挂一排，并放几盏点光
-lant = mat('lant', srgb('#ff6a2a'), 0.4, 0, srgb('#ff7a30'), 18.0)
+lant = mat('lant', srgb('#ff6a2a'), 0.4, 0, srgb('#ff7a30'), 5.0)
 for i, (z0, hgt, wdt, dep) in enumerate(tiers):
     for j in range(5):
         x = -wdt / 2 + 0.6 + j * (wdt - 1.2) / 4
         for s in (-1, 1):
-            bpy.ops.mesh.primitive_uv_sphere_add(radius=0.2, location=(x, s * (dep / 2 + 0.7), z0 + hgt + 0.05))
+            bpy.ops.mesh.primitive_uv_sphere_add(radius=0.16, location=(x, s * (dep / 2 + 0.75), z0 + hgt - 0.2))
             l = bpy.context.object; l.scale = (1, 1, 1.3); put(l, lant); kid(l)
 for x in (-4, 0, 4):
     bpy.ops.object.light_add(type='POINT', location=(x, -2.4, 2.6)); p = bpy.context.object
@@ -207,17 +222,10 @@ for fr, cl, tl in [(1, (10, -26, 2.4), (-1, 8, 4.2)), (N, (5.5, -21, 2.0), (-3.5
     cam.location = cl; tgt.location = tl
     cam.keyframe_insert('location', frame=fr); tgt.keyframe_insert('location', frame=fr)
 
-# ── 合成：按距离加暮色薄雾 + 轻微辉光 ──
-sc.view_layers[0].use_pass_mist = True
-sc.world.mist_settings.start = 15; sc.world.mist_settings.depth = 160; sc.world.mist_settings.falloff = 'QUADRATIC'
+# ── 合成：轻微辉光 ──
 sc.use_nodes = True; ct = sc.node_tree; ct.nodes.clear()
 rl = ct.nodes.new('CompositorNodeRLayers')
-mix = ct.nodes.new('CompositorNodeMixRGB'); mix.blend_type = 'MIX'; mix.inputs[2].default_value = (*srgb('#c88a78'), 1)
-mul = ct.nodes.new('CompositorNodeMath'); mul.operation = 'MULTIPLY'; mul.inputs[1].default_value = 0.75
-ct.links.new(rl.outputs['Mist'], mul.inputs[0]); ct.links.new(mul.outputs[0], mix.inputs[0]); ct.links.new(rl.outputs['Image'], mix.inputs[1])
-gl = ct.nodes.new('CompositorNodeGlare'); gl.glare_type = 'FOG_GLOW'; gl.quality = 'HIGH'; gl.threshold = 1.2; gl.size = 7
-ct.links.new(mix.outputs[0], gl.inputs[0])
-lens = ct.nodes.new('CompositorNodeLensdist'); lens.inputs['Dispersion'].default_value = 0.01
-ct.links.new(gl.outputs[0], lens.inputs[0])
-co = ct.nodes.new('CompositorNodeComposite'); ct.links.new(lens.outputs[0], co.inputs[0])
+gl = ct.nodes.new('CompositorNodeGlare'); gl.glare_type = 'FOG_GLOW'; gl.quality = 'HIGH'; gl.threshold = 1.0; gl.size = 8
+ct.links.new(rl.outputs['Image'], gl.inputs[0])
+co = ct.nodes.new('CompositorNodeComposite'); ct.links.new(gl.outputs[0], co.inputs[0])
 print('SCENE_OK', len(bpy.data.objects))
