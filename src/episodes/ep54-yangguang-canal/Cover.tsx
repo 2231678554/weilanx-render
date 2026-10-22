@@ -85,12 +85,12 @@ const Stage: React.FC<{l: L; children: React.ReactNode}> = ({l, children}) => (
 
 // 3:4 1080×1440：字在上，画在下
 export const Ep54Cover34: React.FC = () => (
-  <Stage l={{sx: 0.8, sl: -470, st: 560, mh: 640}}>
+  <Stage l={{sx: 0.5625, sl: 0, st: 640, mh: 660}}>
     <div style={{...pill, left: 56, top: 60, fontSize: 48}}>隋朝冷知识</div>
     <div style={{...title, left: 50, top: 170, fontSize: 150}}>背了<span style={{color: YEL}}>千年黑锅</span></div>
     <div style={{...title, left: 56, top: 370, fontSize: 80, WebkitTextStroke: `10px ${INK}`}}>杨广修运河，真为下江南？</div>
-    <div style={{...bub, left: 600, top: 700, fontSize: 50}}>看看河通到哪儿！</div>
-    <div style={{...bar, left: 40, top: 1300, fontSize: 52}}>每月征调两百万人修洛阳</div>
+    <div style={{...bub, left: 520, top: 760, fontSize: 42}}>看看河通到哪儿！</div>
+    <div style={{...bar, left: 40, top: 1300, fontSize: 56}}>每月征调两百万人修洛阳</div>
   </Stage>
 );
 
