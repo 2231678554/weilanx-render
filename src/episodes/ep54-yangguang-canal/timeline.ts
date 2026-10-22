@@ -45,9 +45,15 @@ export const SHOT: Record<string, [number, number]> = {
   s26: [200, 208],
   s27: [208, 216],
   s28: [216, 224],
+  s29: [224, 232],
+  s30: [232, 240],
+  s31: [240, 248],
+  s32: [248, 256],
+  s33: [256, 264],
+  s34: [264, 272],
 };
 /** 当前已做完的最后一屏 */
-export const LAST = 's28';
+export const LAST = 's34';
 export const MUSIC_BEAT = 0;
 export const DURATION = fbt(SHOT[LAST][1]);
 
@@ -108,6 +114,17 @@ export const CUES: [number, string | null, boolean?][] = [
   [210.5, '〔均田制〕、〔府兵制〕。'],
   [216, '皇室又是〔关陇贵族〕出身，', true],
   [218.5, '长安这个军事大本营，〖绝对不能丢〗。'],
+  [224, '所以建洛阳，', true],
+  [226.5, '是给帝国添一个「〔粮食首都〕」。'],
+  [232, '方向没错，操作却〖极其残暴〗。', true],
+  [234.5, '诏书上写着：「〔务从俭约〕」。'],
+  [240, '〔杨素〕主持工程，', true],
+  [242.5, '每月征调〖两百万〗百姓。'],
+  [248, '累死的民夫，〖十个里有四五个〗。', true],
+  [250.5, '拉尸体的大车，一辆接一辆，望不到头。'],
+  [256, '紧接着，就是开凿〔大运河〕。', true],
+  [264, '当时经济重心在往南移，', true],
+  [266.5, '可中国的大河全是【东西流】，〖南北不通〗。'],
 ];
 /** 第 5 屏：隋吞陈（屏内拍） */
 export const S5 = {swallow: 3.5, done: 5.2};
@@ -129,6 +146,11 @@ export const S25 = {label: 2.6};
 export const S26 = {q: 1.4};
 export const S27 = {card1: 2.9, card2: 4.4};
 export const S28 = {guard: 3.2};
+export const S29 = {label: 3.4};
+export const S30 = {stamp: 4.6};
+export const S31 = {card: 4.4};
+export const S33 = {pulse: 2};
+export const S34 = {bump: 4.4};
 
 /** 第 2 屏三张标签贴上去的拍（绝对拍） */
 export const TAG_BEATS = [7.5, 9.5, 11.5];
@@ -220,9 +242,22 @@ export const SFX: [string, number, number][] = [
   s('bigdrum', 208 + S27.card1, 0.9), s('stamp', 208 + S27.card1, 0.5), s('bigdrum', 208 + S27.card2, 0.9), s('stamp', 208 + S27.card2, 0.5),
   // 第 28 屏：鼓 + 旗
   s('drum', 216, 0.4), s('flag', 216.2, 0.55), s('drum', 218, 0.35), s('drum', 220, 0.4), s('clang', 216 + S28.guard, 0.4), s('drum', 222, 0.35),
+  // 第 29 屏：流水声
+  s('water', 224, 0.5), s('water', 227.5, 0.45), s('build', 225.5, 0.4), s('stamp', 224 + S29.label, 0.6),
+  // 第 30 屏：诏书 + 盖章
+  s('scroll', 232.2, 0.7), s('brush', 233.6, 0.4), s('brush', 234.4, 0.4), s('stamp', 232 + S30.stamp, 1), s('bigdrum', 232 + S30.stamp, 0.6),
+  // 第 31 屏：工地号子 + 人数卡重鼓
+  s('drum', 240, 0.35), s('thud', 241, 0.35), s('drum', 242, 0.35), s('thud', 243, 0.35),
+  s('bigdrum', 240 + S31.card, 1), s('stamp', 240 + S31.card, 0.7), s('impact', 240 + S31.card, 0.5),
+  // 第 32 屏：慢镜头 + 重鼓，配乐压低
+  s('lowdrum', 248, 0.9), s('creak', 248.6, 0.45), s('creak', 250.4, 0.4), s('bigdrum', 252, 0.8), s('creak', 252.6, 0.35), s('wind', 253, 0.4), s('lowdrum', 254.5, 0.7),
+  // 第 33 屏：轻鼓
+  s('drum', 256, 0.35), s('glint', 256 + S33.pulse, 0.5), s('drum', 258, 0.3), s('drum', 260, 0.35), s('glint', 260 + S33.pulse, 0.4), s('drum', 262, 0.3),
+  // 第 34 屏：流水 + 撞岸「咚」
+  s('water', 264, 0.5), s('water', 267.5, 0.45), s('thud', 264 + S34.bump, 1), s('glint', 264 + S34.bump + 0.4, 0.5),
 ];
 /** 配乐压低：[起拍, 止拍, 增益] */
-export const DUCK: [number, number, number][] = [[144 + S19.out - 0.15, 144 + S19.out + 1, 0.05]];
+export const DUCK: [number, number, number][] = [[144 + S19.out - 0.15, 144 + S19.out + 1, 0.05], [248, 256, 0.32]];
 /** 环境声：运河水声（第 1–3 屏），[文件, 起帧, 止帧, 音量] */
 export const AMBIENCE: [string, number, number, number][] = [
   [`${A}/water.wav`, 0, fbt(SHOT.s3[0]) + S3.zoomA, 0.22],
