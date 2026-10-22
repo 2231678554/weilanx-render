@@ -51,9 +51,16 @@ export const SHOT: Record<string, [number, number]> = {
   s32: [248, 256],
   s33: [256, 264],
   s34: [264, 272],
+  // 第四幕（下）：三个方向开河
+  s35: [272, 280],
+  s36: [280, 288],
+  s37: [288, 298],
+  s38: [298, 306],
+  s39: [306, 314],
+  s40: [314, 322],
 };
 /** 当前已做完的最后一屏 */
-export const LAST = 's34';
+export const LAST = 's40';
 export const MUSIC_BEAT = 0;
 export const DURATION = fbt(SHOT[LAST][1]);
 
@@ -125,6 +132,18 @@ export const CUES: [number, string | null, boolean?][] = [
   [256, '紧接着，就是开凿〔大运河〕。', true],
   [264, '当时经济重心在往南移，', true],
   [266.5, '可中国的大河全是【东西流】，〖南北不通〗。'],
+  [272, '杨广以〔洛阳〕为中心，', true],
+  [274.5, '往〔三个方向〕开河。'],
+  [280, '往东北：〔永济渠〕，', true],
+  [282, '一直通到〔涿郡〕，就是今天北京一带。'],
+  [288, '这不是为了玩，', true],
+  [290.5, '是给〖东征高句丽〗建前线大本营！'],
+  [298, '往东南：〔通济渠〕、〔邗沟〕、〔江南河〕，', true],
+  [301, '一直通到〔余杭〕，就是今天的杭州。'],
+  [306, '【黄河】、【淮河】、【长江】、【钱塘江】，', true],
+  [309.5, '第一次被一条河〔串了起来〕。'],
+  [314, '往西，还有一条〔广通渠〕进长安，', true],
+  [317, '这一段是〔隋文帝〕时就修好的。'],
 ];
 /** 第 5 屏：隋吞陈（屏内拍） */
 export const S5 = {swallow: 3.5, done: 5.2};
@@ -151,6 +170,12 @@ export const S30 = {stamp: 4.6};
 export const S31 = {card: 4.4};
 export const S33 = {pulse: 2};
 export const S34 = {bump: 4.4};
+export const S35 = {a1: 1.0, a2: 2.4, a3: 3.8};
+export const S36 = {d0: 0.5, d1: 4.0};
+export const S37 = {flag: 2.5, boat0: 3.2, boat1: 9.4};
+export const S38 = {d0: 0.4, d1: 2.2, d2: 3.4, d3: 5.2};
+export const S39 = {r0: 0.3, net0: 3.9, net1: 5.6, flash: 5.8};
+export const S40 = {d0: 0.6, d1: 3.4};
 
 /** 第 2 屏三张标签贴上去的拍（绝对拍） */
 export const TAG_BEATS = [7.5, 9.5, 11.5];
@@ -255,6 +280,19 @@ export const SFX: [string, number, number][] = [
   s('drum', 256, 0.35), s('glint', 256 + S33.pulse, 0.5), s('drum', 258, 0.3), s('drum', 260, 0.35), s('glint', 260 + S33.pulse, 0.4), s('drum', 262, 0.3),
   // 第 34 屏：流水 + 撞岸「咚」
   s('water', 264, 0.5), s('water', 267.5, 0.45), s('thud', 264 + S34.bump, 1), s('glint', 264 + S34.bump + 0.4, 0.5),
+  // 第 35 屏：三声鼓
+  s('bigdrum', 272 + S35.a1, 0.75), s('bigdrum', 272 + S35.a2, 0.8), s('bigdrum', 272 + S35.a3, 0.9),
+  // 第 36 屏：金线画出时一串鼓点
+  ...[0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5].map((d) => s('drum', 280 + S36.d0 + d, 0.28 + d * 0.03)), s('stamp', 280 + S36.d1, 0.6), s('glint', 280 + S36.d1 + 0.2, 0.5),
+  // 第 37 屏：白闪 + 战鼓
+  s('flag', 288 + S37.flag - 0.3, 0.5), s('bigdrum', 288 + S37.flag, 1), s('impact', 288 + S37.flag, 0.6),
+  s('drum', 288 + S37.boat0, 0.45), s('drum', 288 + S37.boat0 + 1, 0.4), s('water', 288 + S37.boat0, 0.45), s('drum', 288 + S37.boat0 + 2, 0.45), s('drum', 288 + S37.boat0 + 3, 0.4), s('drum', 288 + S37.boat0 + 4, 0.45), s('drum', 288 + S37.boat0 + 5, 0.4),
+  // 第 38 屏：鼓点（每段运河一声）
+  s('drum', 298 + S38.d0, 0.4), s('stamp', 298 + S38.d1, 0.5), s('drum', 298 + S38.d1, 0.4), s('stamp', 298 + S38.d2, 0.5), s('drum', 298 + S38.d2 + 0.3, 0.4), s('stamp', 298 + S38.d3, 0.55),
+  // 第 39 屏：四河依次亮 + 白闪重鼓
+  ...[0, 1, 2, 3].map((i) => s('glint', 306 + S39.r0 + i, 0.4 + i * 0.05)), s('riser', 306 + S39.net0, 0.5), s('bigdrum', 306 + S39.flash, 1), s('impact', 306 + S39.flash, 0.6),
+  // 第 40 屏：轻鼓
+  s('drum', 314 + S40.d0, 0.3), s('drum', 316, 0.28), s('stamp', 314 + S40.d1, 0.45), s('drum', 318, 0.3), s('drum', 320, 0.28),
 ];
 /** 配乐压低：[起拍, 止拍, 增益] */
 export const DUCK: [number, number, number][] = [[144 + S19.out - 0.15, 144 + S19.out + 1, 0.05], [248, 256, 0.32]];

@@ -25,13 +25,13 @@ const rnd = (i: number) => {
   const x = Math.sin(i * 127.1 + 311.7) * 43758.5453;
   return x - Math.floor(x);
 };
-type LL = [number, number];
+export type LL = [number, number];
 const CHANGAN: LL = [108.94, 34.27];
 const LUOYANG: LL = [112.45, 34.62];
 const JIANGDU: LL = [119.42, 32.39];
 const ZHUO: LL = [116.4, 39.9];
 /** 折线上取点（按段长均分） */
-const along = (pts: LL[], u: number): LL => {
+export const along = (pts: LL[], u: number): LL => {
   const seg = pts.slice(1).map((q, i) => Math.hypot(q[0] - pts[i][0], q[1] - pts[i][1]));
   const tot = seg.reduce((a, b) => a + b, 0);
   let d = clamp01(u) * tot;
@@ -44,7 +44,7 @@ const along = (pts: LL[], u: number): LL => {
   }
   return pts[pts.length - 1];
 };
-const strokePath = (g: CanvasRenderingContext2D, px: Px, pts: LL[], upto = 1) => {
+export const strokePath = (g: CanvasRenderingContext2D, px: Px, pts: LL[], upto = 1) => {
   g.beginPath();
   const n = 60;
   for (let i = 0; i <= n; i++) {
@@ -60,7 +60,7 @@ const SU: Partial<RigProps> = {robe: '#4e2a66', robeD: '#341a48', pants: '#241a2
 const OFFICIAL: Partial<RigProps> = {robe: '#34507a', robeD: '#243856', pants: '#22222a', hem: 130};
 
 /** 小粮船（侧面，SVG） */
-const GrainBoat: React.FC<{x: number; y: number; s: number; dir: number; o?: number}> = ({x, y, s, dir, o = 1}) => (
+export const GrainBoat: React.FC<{x: number; y: number; s: number; dir: number; o?: number}> = ({x, y, s, dir, o = 1}) => (
   <g transform={`translate(${x} ${y}) scale(${dir * s} ${s})`} opacity={o}>
     <path d="M-34 0 L34 0 L26 12 L-28 12 Z" fill="#6a3a1a" stroke="#2a1408" strokeWidth={2} />
     <line x1={0} y1={0} x2={0} y2={-40} stroke="#3a2010" strokeWidth={3} />
@@ -511,13 +511,13 @@ const riverLines = (d: string): LL[][] =>
     const pts = (seg.match(/-?[\d.]+ -?[\d.]+/g) || []).map((q) => { const [x, y] = q.split(' ').map(Number); return unproj(x, y); });
     return pts.length > 1 && pts[0][0] > pts[pts.length - 1][0] ? pts.reverse() : pts;
   }).filter((p) => p.length > 1);
-const RIVERS: [string, LL[][], LL][] = [
+export const RIVERS: [string, LL[][], LL][] = [
   ['黄河', riverLines(GEO.huang), [116.6, 36.5]],
   ['淮河', riverLines(GEO.huai), [114.6, 32.75]],
   ['长江', riverLines(GEO.yangtze), [115.0, 30.3]],
   ['钱塘江', riverLines(GEO.qiantang), [119.0, 29.55]],
 ];
-const polyPath = (g: CanvasRenderingContext2D, px: Px, lines: LL[][]) => {
+export const polyPath = (g: CanvasRenderingContext2D, px: Px, lines: LL[][]) => {
   g.beginPath();
   for (const pts of lines) pts.forEach((q, i) => { const [x, y] = px(q[0], q[1]); if (i) g.lineTo(x, y); else g.moveTo(x, y); });
   g.stroke();
