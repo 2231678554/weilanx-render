@@ -13,27 +13,27 @@ const bt = (b: number) => b * B;
 const seg = (t: number, a: number, b: number) => clamp01((t - bt(a)) / bt(b - a));
 
 /* ── 隋代运河走向（示意，取主要节点） ── */
-const CHANGAN: LL = [108.94, 34.27];
-const LUOYANG: LL = [112.45, 34.62];
-const TONGGUAN: LL = [110.25, 34.58];
-const ZHUO: LL = [116.4, 39.9];
-const JIANGDU: LL = [119.42, 32.39];
-const YUHANG: LL = [120.16, 30.28];
+export const CHANGAN: LL = [108.94, 34.27];
+export const LUOYANG: LL = [112.45, 34.62];
+export const TONGGUAN: LL = [110.25, 34.58];
+export const ZHUO: LL = [116.4, 39.9];
+export const JIANGDU: LL = [119.42, 32.39];
+export const YUHANG: LL = [120.16, 30.28];
 const KOGURYO: LL = [124.6, 41.0];
 /** 永济渠：沁水口（黄河北岸）→ 馆陶 → 临清 → 德州 → 沧州 → 天津 → 涿郡 */
-const YONGJI: LL[] = [[113.35, 35.05], [113.9, 35.35], [114.6, 35.9], [115.35, 36.55], [115.75, 37.0], [116.3, 37.5], [116.85, 38.3], [117.15, 38.95], [116.8, 39.45], ZHUO];
+export const YONGJI: LL[] = [[113.35, 35.05], [113.9, 35.35], [114.6, 35.9], [115.35, 36.55], [115.75, 37.0], [116.3, 37.5], [116.85, 38.3], [117.15, 38.95], [116.8, 39.45], ZHUO];
 /** 通济渠：洛阳 → 板渚 → 汴州 → 宋州 → 埇桥 → 泗州（入淮） */
-const TONGJI: LL[] = [LUOYANG, [113.0, 34.78], [113.4, 34.85], [114.35, 34.8], [115.65, 34.42], [116.95, 33.65], [118.0, 33.25], [118.5, 33.0]];
+export const TONGJI: LL[] = [LUOYANG, [113.0, 34.78], [113.4, 34.85], [114.35, 34.8], [115.65, 34.42], [116.95, 33.65], [118.0, 33.25], [118.5, 33.0]];
 /** 淮河一段 + 邗沟：泗州 → 山阳（淮安）→ 江都 */
-const HANGOU: LL[] = [[118.5, 33.0], [119.0, 33.45], [119.15, 33.5], [119.3, 33.05], [119.42, 32.7], JIANGDU];
+export const HANGOU: LL[] = [[118.5, 33.0], [119.0, 33.45], [119.15, 33.5], [119.3, 33.05], [119.42, 32.7], JIANGDU];
 /** 江南河：京口 → 常州 → 无锡 → 苏州 → 嘉兴 → 余杭 */
-const JIANGNAN: LL[] = [[119.45, 32.2], [119.95, 31.78], [120.3, 31.57], [120.6, 31.3], [120.75, 30.75], [120.45, 30.45], YUHANG];
+export const JIANGNAN: LL[] = [[119.45, 32.2], [119.95, 31.78], [120.3, 31.57], [120.6, 31.3], [120.75, 30.75], [120.45, 30.45], YUHANG];
 /** 广通渠：潼关 → 渭南 → 长安 */
-const GUANGTONG: LL[] = [TONGGUAN, [109.9, 34.56], [109.5, 34.52], [109.2, 34.42], CHANGAN];
+export const GUANGTONG: LL[] = [TONGGUAN, [109.9, 34.56], [109.5, 34.52], [109.2, 34.42], CHANGAN];
 /** 611 年北上：江都 → 邗沟 → 通济渠 → 渡河 → 永济渠 → 涿郡 */
 const NORTH611: LL[] = [...[...HANGOU].reverse(), ...[...TONGJI].reverse().slice(1, -2), [113.4, 34.85], ...YONGJI];
 
-const WIDE: Cam3 = {lon: 115.6, lat: 34.6, dist: 2500, pitch: 62, yaw: 0};
+export const WIDE: Cam3 = {lon: 115.6, lat: 34.6, dist: 2500, pitch: 62, yaw: 0};
 
 /** 画布上的虚线箭头（Drape 里） */
 const dashArrow = (g: CanvasRenderingContext2D, px: Px, a: LL, b: LL, p: number, flow: number) => {

@@ -139,7 +139,7 @@ const kneelOne = (x: number, s: number, facing: 1 | -1) => {
   };
 };
 
-const Tomb: React.FC<{f: number; lit: (i: number) => number}> = ({f, lit}) => {
+export const Tomb: React.FC<{f: number; lit: (i: number) => number}> = ({f, lit}) => {
   const bricks: React.ReactNode[] = [];
   for (let r = 0; r < 26; r++) {
     for (let c = -1; c < 15; c++) {

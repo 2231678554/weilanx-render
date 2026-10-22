@@ -78,7 +78,7 @@ const Sc41: React.FC<{t: number}> = ({t}) => {
     g.fillStyle = gr;
     g.fillRect(x0 - 260, y0 - 120, 640, 560);
   };
-  const tx = (i: number) => project(cam, 112.6 + i * 1.05 + (t / bt(9)) * 0.8, 41.4 - (i % 2) * 0.25, 2);
+  const tx = (i: number) => project(cam, 112.6 + i * 1.05 + (t / bt(9)) * 0.8, 40.5 - (i % 2) * 0.25, 2);
   const [jx, jy] = project(cam, 118.78, 32.05, 4);
   return (
     <AbsoluteFill>
@@ -94,7 +94,7 @@ const Sc41: React.FC<{t: number}> = ({t}) => {
         </g>
         {turk > 0 && (() => {
           const [x, y] = tx(3);
-          return <text x={x} y={y - 175} textAnchor="middle" fontFamily={LF.serif} fontWeight={900} fontSize={60} fill="#ff9a80" stroke="#1a0a04" strokeWidth={6} paintOrder="stroke" opacity={turk}>突厥</text>;
+          return <text x={x} y={y + 70} textAnchor="middle" fontFamily={LF.serif} fontWeight={900} fontSize={60} fill="#ff9a80" stroke="#1a0a04" strokeWidth={6} paintOrder="stroke" opacity={turk}>突厥</text>;
         })()}
         <g opacity={chen} transform={`translate(0 ${(1 - chen) * 30})`}>
           <GateTower x={jx} y={jy} s={0.6} />

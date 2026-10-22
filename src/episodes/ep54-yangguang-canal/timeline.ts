@@ -74,9 +74,17 @@ export const SHOT: Record<string, [number, number]> = {
   s54: [436, 445],
   s55: [445, 454],
   s56: [454, 464],
+  s57: [464, 472],
+  s58: [472, 480],
+  s59: [480, 490],
+  s60: [490, 498],
+  s61: [498, 506],
+  s62: [506, 515],
+  s63: [515, 523],
+  s64: [523, 533],
 };
 /** 当前已做完的最后一屏 */
-export const LAST = 's56';
+export const LAST = 's64';
 export const MUSIC_BEAT = 0;
 export const DURATION = fbt(SHOT[LAST][1]);
 
@@ -191,6 +199,22 @@ export const CUES: [number, string | null, boolean?][] = [
   [449, '大隋的威望到了〔顶点〕。'],
   [454, '可回程翻越〖大斗拔谷〗，', true],
   [457.5, '风雪里，士兵〖死了十之二三〗。'],
+  [464, '回头再看扬州那方〔墓志〕：', true],
+  [467, '调动百万民夫、开河修都、灭国开疆的皇帝，'],
+  [472, '死后只有一座〖不大的砖室墓〗，', true],
+  [475.5, '墓里一条〔十三环金玉带〕，还是皇帝的规格。'],
+  [480, '史学界常用八个字评价他：', true],
+  [483.5, '「〖罪在当代〗，〔功在千秋〕」。'],
+  [490, '他不是看不见大运河的价值，', true],
+  [493, '而是把修河、建都、西征、伐辽，全塞进了〖十几年〗。'],
+  [498, '用〖一个人的意志〗，', true],
+  [501, '去〖催熟〗一个帝国。'],
+  [506, '这口锅，有一半〔不该背〕：', true],
+  [509.5, '大运河，绝不只是〔享乐工程〕。'],
+  [515, '另一半他〖必须背〗：', true],
+  [518, '再大的千秋大业，也不该〖视人命如草芥〗。'],
+  [523, '巅峰的大隋，还能撑多久？', true],
+  [527.5, '【下集接着聊】。'],
 ];
 /** 第 5 屏：隋吞陈（屏内拍） */
 export const S5 = {swallow: 3.5, done: 5.2};
@@ -237,6 +261,12 @@ export const S52 = {card: 1.2};
 export const S53 = {paint0: 0.8, paint1: 3.6, card: 4.2};
 export const S54 = {j1: 0.8, j2: 1.6, j3: 2.4, j4: 3.2, cut: 4.4};
 export const S55 = {card: 4.0};
+export const S58 = {ring0: 3.4, ring1: 7.0};
+export const S59 = {c0: 3.4, c1: 7.4, turn: 8.0};
+export const S61 = {slam: 3.0};
+export const S62 = {gust: 3.0, drop: 4.4};
+export const S63 = {weld1: 1.0, weld2: 2.6, sink: 4.0};
+export const S64 = {q: 4.5};
 
 /** 第 2 屏三张标签贴上去的拍（绝对拍） */
 export const TAG_BEATS = [7.5, 9.5, 11.5];
@@ -377,9 +407,18 @@ export const SFX: [string, number, number][] = [
   ...[S54.j1, S54.j2, S54.j3, S54.j4].map((b) => s('drum', 436 + b, 0.3)), s('whoosh', 436 + S54.cut, 0.35), s('steps', 441.5, 0.4), s('clink', 442, 0.3), s('steps', 443.5, 0.35),
   s('drum', 445, 0.35), s('bell', 446, 0.5), s('drum', 447, 0.3), s('dang', 445 + S55.card, 0.7), s('bigdrum', 445 + S55.card, 0.8), s('drum', 451, 0.3), s('bell', 452, 0.4),
   s('lowdrum', 454, 0.7), s('wind', 454, 0.6), s('wind', 457, 0.6), s('wind', 460, 0.55), s('thud', 459, 0.35),
+  // 结局
+  s('wind', 464, 0.45), s('brush', 466, 0.3), s('wind', 468, 0.35),
+  s('lowdrum', 472, 0.5), ...Array.from({length: 13}, (_, i) => s('clink', 472 + S58.ring0 + (i * (S58.ring1 - S58.ring0)) / 12, 0.32)),
+  ...Array.from({length: 8}, (_, i) => s(i === 3 || i === 7 ? 'bigdrum' : 'drum', 480 + S59.c0 + (i * (S59.c1 - S59.c0)) / 7, i === 3 || i === 7 ? 0.8 : 0.4)), s('whoosh', 480 + S59.turn, 0.4),
+  ...Array.from({length: 14}, (_, i) => s('scroll', 490 + 0.3 + 7 * (1 - Math.pow(1 - i / 14, 1.6)), 0.25 + i * 0.015)),
+  s('riser', 498 + S61.slam - 1.4, 0.45), s('bigdrum', 498 + S61.slam, 1.0), s('crack', 498 + S61.slam, 0.7), s('impact', 498 + S61.slam, 0.6), s('crack', 498 + S61.slam + 0.4, 0.4),
+  s('wind', 506 + S62.gust, 0.5), s('drum', 506, 0.3), s('drum', 508, 0.28), s('water', 506 + S62.drop + 0.6, 0.4), s('drum', 512, 0.28),
+  s('bigdrum', 515 + S63.weld1, 0.95), s('stamp', 515 + S63.weld1, 0.5), s('puff', 515 + S63.weld1 + 0.2, 0.45), s('bigdrum', 515 + S63.weld2, 0.95), s('stamp', 515 + S63.weld2, 0.5), s('puff', 515 + S63.weld2 + 0.2, 0.45), s('lowdrum', 515 + S63.sink, 0.7),
+  s('water', 523, 0.35), s('lowdrum', 523 + S64.q, 0.8),
 ];
 /** 配乐压低：[起拍, 止拍, 增益] */
-export const DUCK: [number, number, number][] = [[144 + S19.out - 0.15, 144 + S19.out + 1, 0.05], [248, 256, 0.32], [348, 366, 0.34], [454, 464, 0.3]];
+export const DUCK: [number, number, number][] = [[144 + S19.out - 0.15, 144 + S19.out + 1, 0.05], [248, 256, 0.32], [348, 366, 0.34], [454, 464, 0.3], [523 + S64.q - 1, 523 + S64.q, 0.05]];
 /** 环境声：运河水声（第 1–3 屏），[文件, 起帧, 止帧, 音量] */
 export const AMBIENCE: [string, number, number, number][] = [
   [`${A}/water.wav`, 0, fbt(SHOT.s3[0]) + S3.zoomA, 0.22],

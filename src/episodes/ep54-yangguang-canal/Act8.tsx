@@ -75,13 +75,13 @@ const silkLine = (g: CanvasRenderingContext2D, px: Px, p: number, flow: number, 
   g.globalAlpha = alpha;
   g.lineCap = 'round';
   g.lineJoin = 'round';
-  g.setLineDash([26, 18]);
-  g.lineDashOffset = -flow;
-  g.strokeStyle = 'rgba(40,20,4,0.65)';
-  g.lineWidth = 16;
+  g.strokeStyle = 'rgba(30,14,2,0.75)';
+  g.lineWidth = 22;
   polyline(g, px, SILK, p); g.stroke();
-  g.strokeStyle = '#ffd070';
-  g.lineWidth = 9;
+  g.setLineDash([30, 18]);
+  g.lineDashOffset = -flow;
+  g.strokeStyle = '#ffe08a';
+  g.lineWidth = 12;
   const end = polyline(g, px, SILK, p); g.stroke();
   g.setLineDash([]);
   g.fillStyle = '#fff0c0';
@@ -124,7 +124,7 @@ const FlagIcon: React.FC<{x: number; y: number; s: number; text: string; color: 
 /* ═════════ 第 46 屏：地图往西拉，丝绸之路从长安伸向西域 ═════════ */
 const Sc46: React.FC<{t: number}> = ({t}) => {
   const k = easeInOut(clamp01(t / bt(8)));
-  const cam: Cam3 = {lon: lerp(108.5, 100.0, k), lat: lerp(35.6, 37.6, k), dist: lerp(2300, 3000, k), pitch: 60, yaw: 0};
+  const cam: Cam3 = {lon: lerp(107.5, 101.8, k), lat: lerp(35.4, 37.4, k), dist: lerp(1500, 1800, k), pitch: 60, yaw: 0};
   const p = easeInOut(seg(t, S46.line0, S46.line1));
   const flow = t * 2.2;
   const paint = (g: CanvasRenderingContext2D, px: Px) => silkLine(g, px, p, flow);
@@ -139,7 +139,7 @@ const Sc46: React.FC<{t: number}> = ({t}) => {
       <Label3 cam={cam} at={LANZHOU} name="兰州" lift={16} size={34} o={p > 0.3 ? 0.85 : 0} color="#e8dcc0" />
       <Label3 cam={cam} at={ZHANGYE} name="张掖" lift={16} size={34} o={p > 0.6 ? 0.85 : 0} color="#e8dcc0" />
       <Label3 cam={cam} at={DUNHUANG} name="敦煌" lift={16} size={38} o={p > 0.85 ? 1 : 0} />
-      {LL_TAG(cam, [91.6, 41.4], '西域 →', west, '#ffe6a8', 56)}
+      {LL_TAG(cam, [93.6, 40.6], '← 西域', west, '#ffe6a8', 56)}
       <Card x={1240} y={760} text="丝绸之路" p={card} size={62} />
       <Vignette k={0.35} />
     </AbsoluteFill>
@@ -149,7 +149,7 @@ const Sc46: React.FC<{t: number}> = ({t}) => {
 /* ═════════ 第 47 屏：西突厥两面旗互撞（内斗）；青海湖吐谷浑营地亮起，挡在丝路南边 ═════════ */
 const Sc47: React.FC<{t: number}> = ({t}) => {
   const k = easeInOut(clamp01(t / bt(9)));
-  const cam: Cam3 = {lon: lerp(97.5, 98.6, k), lat: lerp(39.4, 38.6, k), dist: lerp(3000, 2800, k), pitch: 58, yaw: 0};
+  const cam: Cam3 = {lon: lerp(100.2, 100.8, k), lat: lerp(38.6, 38.2, k), dist: lerp(1850, 1750, k), pitch: 58, yaw: 0};
   const clash = t - bt(S47.clash);
   const swing = clash < 0 ? easeInOut(clamp01(t / bt(S47.clash))) : 1;
   const recoil = clash > 0 ? Math.sin(Math.min(clash, 18) / 3) * Math.max(0, 1 - clash / 18) * 14 : 0;
@@ -167,8 +167,8 @@ const Sc47: React.FC<{t: number}> = ({t}) => {
       g.setLineDash([]);
     }
   };
-  const [ax, ay] = project(cam, 93.5, 43.6, 6);
-  const [bx, by] = project(cam, 97.0, 43.6, 6);
+  const [ax, ay] = [560, 470];
+  const [bx, by] = [900, 470];
   const mid = (ax + bx) / 2;
   const lx = lerp(ax - 160, mid - 70, swing) - recoil, rx = lerp(bx + 160, mid + 70, swing) + recoil;
   const spark = clash > 0 && clash < 12 ? 1 - clash / 12 : 0;
@@ -193,7 +193,7 @@ const Sc47: React.FC<{t: number}> = ({t}) => {
           return o > 0 ? <g key={i} opacity={o}><Yurt x={x} y={y} s={0.55} glow={0.6 + 0.4 * Math.sin(t / 6 + i)} red /></g> : null;
         })}
       </Svg>
-      {LL_TAG(cam, [95.25, 44.7], '西突厥', clamp01(t / bt(1)), '#d8d0ff', 50, -120)}
+      {clamp01(t / bt(1)) > 0 && <div style={{position: 'absolute', left: 530, top: 500, width: 400, textAlign: 'center', fontFamily: LF.serif, fontWeight: 900, fontSize: 52, color: '#d8d0ff', WebkitTextStroke: '2px #1a0c04', textShadow: '0 4px 14px rgba(0,0,0,0.85)', opacity: clamp01(t / bt(1))}}>西突厥（内斗）</div>}
       {LL_TAG(cam, [100.0, 35.6], '吐谷浑', camp, '#ff9a80', 64, 0)}
       <Label3 cam={cam} at={QHLAKE} name="青海湖" lift={10} size={30} o={0.8} color="#cfe6f0" />
       <Label3 cam={cam} at={DUNHUANG} name="敦煌" lift={14} size={32} o={0.8} color="#e8dcc0" />
@@ -207,16 +207,16 @@ const Sc47: React.FC<{t: number}> = ({t}) => {
 const MIGRATE: LL[] = [[121.5, 41.6], [118.0, 41.9], [114.0, 41.3], [110.5, 40.7], [107.0, 39.3], [104.5, 37.6], [102.6, 36.9], [100.9, 36.9]];
 const Sc48: React.FC<{t: number}> = ({t}) => {
   const k = easeInOut(clamp01(t / bt(9)));
-  const cam: Cam3 = {lon: lerp(113.0, 110.0, k), lat: lerp(38.4, 38.0, k), dist: 4100, pitch: 56, yaw: 0};
+  const cam: Cam3 = {lon: lerp(112.5, 110.8, k), lat: lerp(38.0, 37.6, k), dist: 2350, pitch: 56, yaw: 0};
   const p = easeInOut(seg(t, S48.mig0, S48.mig1));
   const card = easeOut(seg(t, S48.card, S48.card + 0.7));
   const paint = (g: CanvasRenderingContext2D, px: Px) => {
     if (p <= 0) return;
     g.save();
     g.lineCap = 'round'; g.lineJoin = 'round';
-    g.strokeStyle = 'rgba(40,20,4,0.6)'; g.lineWidth = 18;
+    g.strokeStyle = 'rgba(30,14,2,0.75)'; g.lineWidth = 24;
     polyline(g, px, MIGRATE, p); g.stroke();
-    g.strokeStyle = '#a8d8ff'; g.lineWidth = 9;
+    g.strokeStyle = '#bfe4ff'; g.lineWidth = 13;
     g.setLineDash([24, 16]);
     polyline(g, px, MIGRATE, p); g.stroke();
     g.restore();
@@ -231,13 +231,13 @@ const Sc48: React.FC<{t: number}> = ({t}) => {
         {p > 0 && [0, 1, 2, 3].map((i) => {
           const q = alongLL(MIGRATE, Math.max(0, p - i * 0.025));
           const [x, y] = project(cam, q[0], q[1], 4);
-          return <g key={i} style={{filter: 'brightness(0.25) sepia(0.5)'}} transform={`translate(${x} ${y}) scale(${q[0] > head[0] - 0.01 && i === 0 ? -1 : -1} 1) translate(${-x} ${-y})`}><Rider f={t} x={x + i * 6} y={y - (i % 2) * 8} s={0.11} seed={i * 1.3} /></g>;
+          return <g key={i} style={{filter: 'brightness(0.25) sepia(0.5)'}} transform={`translate(${x} ${y}) scale(${q[0] > head[0] - 0.01 && i === 0 ? -1 : -1} 1) translate(${-x} ${-y})`}><Rider f={t} x={x + i * 6} y={y - (i % 2) * 8} s={0.17} seed={i * 1.3} /></g>;
         })}
       </Svg>
       <Label3 cam={cam} at={[121.5, 41.6]} name="辽西（慕容部故地）" side="left" lift={14} size={32} o={0.85} color="#e8dcc0" />
       <Label3 cam={cam} at={QHLAKE} name="青海湖" lift={10} size={34} o={p > 0.9 ? 1 : 0.5} color="#cfe6f0" />
-      <Card x={960} y={150} text="慕容吐谷浑" p={card} size={66} rot={0} />
-      {card > 0 && <div style={{position: 'absolute', left: 0, width: 1920, top: 262, textAlign: 'center', fontFamily: LF.serif, fontWeight: 900, fontSize: 36, color: '#e8d8b0', textShadow: '0 2px 10px #000', opacity: card}}>鲜卑慕容部 · 第一代首领</div>}
+      <Card x={1380} y={760} text="慕容吐谷浑" p={card} size={66} rot={0} />
+      {card > 0 && <div style={{position: 'absolute', left: 880, width: 1000, top: 872, textAlign: 'center', fontFamily: LF.serif, fontWeight: 900, fontSize: 36, color: '#e8d8b0', textShadow: '0 2px 10px #000', opacity: card}}>鲜卑慕容部 · 第一代首领</div>}
       <Vignette k={0.35} />
     </AbsoluteFill>
   );
@@ -290,7 +290,7 @@ const Sc49: React.FC<{t: number}> = ({t}) => {
         })}
       </Svg>
       <Label3 cam={cam} at={XIPING} name="西平" lift={14} size={40} />
-      {LL_TAG(cam, [99.9, 38.6], '铁勒', clamp01(t / bt(0.8)), '#e0d0ff', 52, -150)}
+      {LL_TAG(cam, [99.2, 38.3], '铁勒', clamp01(t / bt(0.8)), '#e0d0ff', 52, -40)}
       {LL_TAG(cam, camp, '吐谷浑', clamp01(t / bt(0.8)), '#ff9a80', 44, 30)}
       <Card x={1400} y={240} text="608 年" p={easeOut(seg(t, S49.charge, S49.charge + 0.7))} size={56} />
       <Card x={1400} y={370} text="斩首 3000+" p={card} size={64} red />
@@ -307,18 +307,19 @@ const FurCollar: React.FC<{neck: P; s: number}> = ({neck, s}) => (
     <path d={`M${neck[0] - 10 * s} ${neck[1] + 20 * s} L${neck[0] + 20 * s} ${neck[1] + 120 * s} L${neck[0] + 40 * s} ${neck[1] + 20 * s}`} fill="#e8d8b8" stroke="#8a7458" strokeWidth={3 * s} />
   </g>
 );
-const BigFlag: React.FC<{x: number; y: number; ang: number; p: number; s?: number}> = ({x, y, ang, p, s = 1}) => {
+const BigFlag: React.FC<{x: number; y: number; from: number; p: number; s?: number; tilt?: number}> = ({x, y, from, p, s = 1, tilt = 0}) => {
   if (p <= 0) return null;
-  // 从画外沿旗杆方向插进来
-  const d = (1 - easeOut(p)) * 900;
-  const rad = (ang * Math.PI) / 180;
+  // from：飞来方向（度，0 = 上方，90 = 右方）；旗杆基本竖直，字不倒
+  const d = (1 - easeOut(p)) * 1100;
+  const rad = (from * Math.PI) / 180;
   const ox = Math.sin(rad) * d, oy = -Math.cos(rad) * d;
   return (
-    <g transform={`translate(${x + ox} ${y + oy}) rotate(${ang}) scale(${s})`}>
+    <g transform={`translate(${x + ox} ${y + oy}) rotate(${tilt}) scale(${s})`}>
       <line x1={0} y1={0} x2={0} y2={-520} stroke="#2a1a0c" strokeWidth={14} />
       <path d="M0 -540 l-12 34 l24 0 Z" fill="#c8c8c8" />
       <path d="M8 -500 L230 -490 L230 -250 L8 -240 Z" fill="#141414" stroke="#c8281c" strokeWidth={8} />
       <text x={119} y={-322} textAnchor="middle" fontFamily={LF.serif} fontWeight={900} fontSize={150} fill="#ffe0a0">隋</text>
+      <ellipse cx={0} cy={0} rx={30} ry={8} fill="#1a1208" opacity={p >= 1 ? 0.6 : 0} />
     </g>
   );
 };
@@ -329,17 +330,17 @@ const Sc50: React.FC<{t: number}> = ({t}) => {
   const shake = last >= 0 && last < 8 ? Math.sin(last * 3.2) * (8 - last) * 1.4 : 0;
   const look = Math.sin(t / 7);
   const facing: 1 | -1 = look > 0 ? 1 : -1;
-  const s = 0.62, gx = 960, gy = 820;
+  const s = 0.5, gx = 960, gy = 720;
   const base = standPose(gx, gy, s, facing);
   const neck: P = [gx + facing * 4 * s, base.neck[1] + 10 * s];
   const head = headOf(base.hip, neck, s);
   const fear = clamp01((t - bt(S50.f1)) / 20);
   const dir: [number, number, number, string, number, number][] = [
     // x, y, 角度, 地名, 地名x, 地名y
-    [960, 380, 180, '雪山', 960, 150],
-    [960, 1100, 0, '金山', 960, 1010],
-    [1560, 720, 90, '琵琶峡', 1700, 600],
-    [360, 720, -90, '泥岭', 220, 600],
+    [930, 540, 0, '雪山', 1240, 330],
+    [930, 1075, 180, '金山', 1250, 900],
+    [1580, 840, 90, '琵琶峡', 1720, 470],
+    [260, 840, -90, '泥岭', 400, 470],
   ];
   return (
     <AbsoluteFill style={{transform: `translate(${shake}px, ${shake * 0.5}px)`}}>
@@ -362,22 +363,22 @@ const Sc50: React.FC<{t: number}> = ({t}) => {
         <path d="M0 640 Q480 520 960 560 Q1440 520 1920 640 L1920 1080 L0 1080 Z" fill="url(#bowl50)" />
         <path d="M0 700 Q300 600 520 680 L0 900 Z M1920 700 Q1620 600 1400 680 L1920 900 Z" fill="#4a3e2c" />
         {/* 营帐 */}
-        <g transform="translate(1180 760) scale(1.6)"><Yurt x={0} y={0} s={1.3} /></g>
-        <g transform="translate(760 740) scale(1.2)"><Yurt x={0} y={0} s={1.0} /></g>
+        <g transform="translate(1200 700) scale(1.4)"><Yurt x={0} y={0} s={1.2} /></g>
+        <g transform="translate(720 690) scale(1.1)"><Yurt x={0} y={0} s={1.0} /></g>
         <ellipse cx={gx} cy={gy + 6} rx={120} ry={18} fill="#1a1208" opacity={0.5} />
         {R(FUYUN, {...base, neck, headAt: [head[0] + look * 14 * s, head[1]], handN: [head[0] + 34 * s, head[1] - 30 * s], handF: [head[0] - 30 * s, head[1] - 32 * s], elbowBend: -1}, s, {face: fear > 0.3 ? 'shock' : 'pain', headTilt: look * 12}, <FurCollar neck={neck} s={s} />)}
         {/* 四面大旗 */}
-        {dir.map(([x, y, a], i) => <BigFlag key={i} x={x} y={y} ang={a} p={ps[i]} s={0.62} />)}
+        {dir.map(([x, y, a], i) => <BigFlag key={i} x={x} y={y} from={a} p={ps[i]} s={[0.5, 0.55, 0.62, 0.62][i]} tilt={[0, 0, -8, 8][i]} />)}
         {/* 十字锁线 */}
         {ps[3] >= 1 && <g opacity={clamp01((t - bt(S50.f4)) / 8)}>
-          <line x1={960} y1={300} x2={960} y2={1080} stroke="#ffd070" strokeWidth={5} strokeDasharray="20 14" opacity={0.6} />
-          <line x1={300} y1={700} x2={1620} y2={700} stroke="#ffd070" strokeWidth={5} strokeDasharray="20 14" opacity={0.6} />
+          <line x1={960} y1={420} x2={960} y2={1080} stroke="#ffd070" strokeWidth={5} strokeDasharray="20 14" opacity={0.6} />
+          <line x1={300} y1={760} x2={1620} y2={760} stroke="#ffd070" strokeWidth={5} strokeDasharray="20 14" opacity={0.6} />
         </g>}
       </Svg>
       {dir.map(([, , , n, x, y], i) => ps[i] >= 1 ? (
         <div key={n} style={{position: 'absolute', left: x - 160, top: y - 40, width: 320, textAlign: 'center', fontFamily: LF.serif, fontWeight: 900, fontSize: 54, color: '#ffe6a8', WebkitTextStroke: '2px #1a0c04', textShadow: '0 4px 14px rgba(0,0,0,0.85)', transform: `scale(${lerp(1.5, 1, easeOutBack(clamp01((t - bt(hits[i])) / 8)))})`}}>{n}</div>
       ) : null)}
-      <div style={{position: 'absolute', left: 1080, top: 905, fontFamily: LF.serif, fontWeight: 900, fontSize: 44, color: '#ffd8a0', WebkitTextStroke: '2px #1a0c04', textShadow: '0 2px 10px #000'}}>伏允</div>
+      <div style={{position: 'absolute', left: 1040, top: 640, fontFamily: LF.serif, fontWeight: 900, fontSize: 44, color: '#ffd8a0', WebkitTextStroke: '2px #1a0c04', textShadow: '0 2px 10px #000'}}>伏允</div>
       <Card x={1650} y={150} text="609 年" p={easeOut(seg(t, S50.year, S50.year + 0.7))} size={54} />
       <Vignette k={0.45} />
     </AbsoluteFill>
@@ -505,7 +506,7 @@ const Sc52: React.FC<{t: number}> = ({t}) => {
 /* ═════════ 第 53 屏：吐谷浑故地刷成隋的颜色，「东西 4000 里 × 南北 2000 里」 ═════════ */
 const Sc53: React.FC<{t: number}> = ({t}) => {
   const k = easeInOut(clamp01(t / bt(9)));
-  const cam: Cam3 = {lon: lerp(97.0, 96.6, k), lat: lerp(36.6, 36.4, k), dist: lerp(2700, 2850, k), pitch: 58, yaw: 0};
+  const cam: Cam3 = {lon: lerp(99.3, 99.0, k), lat: lerp(36.4, 36.2, k), dist: lerp(1550, 1650, k), pitch: 58, yaw: 0};
   const sweep = easeInOut(seg(t, S53.paint0, S53.paint1));
   const flash = t - bt(S53.paint1);
   const paint = (g: CanvasRenderingContext2D, px: Px) => {
@@ -539,7 +540,7 @@ const Sc53: React.FC<{t: number}> = ({t}) => {
       <Label3 cam={cam} at={QHLAKE} name="青海湖" lift={10} size={30} o={0.8} color="#cfe6f0" />
       <Label3 cam={cam} at={DUNHUANG} name="敦煌" lift={14} size={32} o={0.8} color="#e8dcc0" />
       <Label3 cam={cam} at={XIPING} name="西平" lift={14} size={32} o={0.8} color="#e8dcc0" />
-      {LL_TAG(cam, [96.2, 36.2], sweep >= 1 ? '隋' : '吐谷浑', 1, sweep >= 1 ? '#ffe6a8' : '#ff9a80', sweep >= 1 ? 96 : 60, -40)}
+      {LL_TAG(cam, [97.0, 36.2], sweep >= 1 ? '隋' : '吐谷浑', 1, sweep >= 1 ? '#ffe6a8' : '#ff9a80', sweep >= 1 ? 96 : 60, -40)}
       <Card x={960} y={830} text="东西 4000 里 × 南北 2000 里" p={card} size={58} rot={0} />
       {flash > 0 && flash < 14 && <AbsoluteFill style={{background: '#fff8e0', opacity: 0.7 * (1 - flash / 14)}} />}
       <Vignette k={0.35} />
@@ -548,7 +549,7 @@ const Sc53: React.FC<{t: number}> = ({t}) => {
 };
 
 /* ═════════ 第 54 屏：四郡名浮出；戴枷犯人扛锄头走进田里 ═════════ */
-const JUN: [LL, string, boolean][] = [[[99.9, 36.95], '西海郡', false], [[99.6, 35.6], '河源郡', false], [[90.9, 39.2], '← 鄯善郡', true], [[90.9, 37.9], '← 且末郡', true]];
+const JUN: [LL, string, boolean][] = [[[99.9, 36.95], '西海郡', false], [[99.6, 35.6], '河源郡', false], [[92.6, 38.9], '← 鄯善郡', true], [[92.4, 37.4], '← 且末郡', true]];
 const Convict: React.FC<{t: number; x: number; y: number; s: number; seed: number}> = ({t, x, y, s, seed}) => {
   const p = walkPose(x, y, t / 22 + seed, s, 1);
   const hd = headOf(p.hip, p.neck, s);
@@ -568,7 +569,7 @@ const Convict: React.FC<{t: number; x: number; y: number; s: number; seed: numbe
 };
 const Sc54: React.FC<{t: number}> = ({t}) => {
   const cut = bt(S54.cut);
-  const cam: Cam3 = {lon: 96.4, lat: 36.8, dist: 2700, pitch: 58, yaw: 0};
+  const cam: Cam3 = {lon: 99.0, lat: 36.2, dist: 1650, pitch: 58, yaw: 0};
   const paint = (g: CanvasRenderingContext2D, px: Px) => {
     polyFill(g, px, TUYU);
     g.fillStyle = 'rgba(255,200,90,0.45)';
