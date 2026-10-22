@@ -9,7 +9,7 @@ def mask(n):
     m = bpy.data.images.load(f"{A}/{n}.png"); m.colorspace_settings.name = "Non-Color"; return m
 # ---------- 深度网格 ----------
 g = np.load(f"{A}/disp_grid.npy").astype(np.float64); GH, GW = g.shape
-NEAR, FAR, K = 3.2, 14.0, 0.5
+NEAR, FAR, K = 4.2, 14.0, 0.5
 z = 1.0/(1.0/FAR + g*(1.0/NEAR - 1.0/FAR))
 u = np.linspace(0, 1, GW)[None, :].repeat(GH, 0); v = np.linspace(0, 1, GH)[:, None].repeat(GW, 1)
 X = (u-0.5)*2*K*z; Y = (v-0.5)*2*K/AR*z
@@ -104,7 +104,7 @@ cam = bpy.data.objects.new("cam", cd); sc.collection.objects.link(cam); sc.camer
 def key(f, loc, rz):
     cam.location = loc; cam.rotation_euler = (0, math.radians(rz), 0)
     cam.keyframe_insert("location", frame=f); cam.keyframe_insert("rotation_euler", frame=f)
-key(1, (-0.18, 0.02, 0.0), 0.6); key(NF, (0.22, 0.10, -0.85), -0.6)
+key(1, (-0.08, 0.01, 0.0), 0.3); key(NF, (0.10, 0.05, -0.40), -0.3)
 for fc in cam.animation_data.action.fcurves:
     for kp in fc.keyframe_points: kp.interpolation = "BEZIER"; kp.easing = "AUTO"
 # ---------- 渲染设置 ----------
@@ -115,7 +115,7 @@ RX = 1080 if AR < 1 else 1920
 sc.render.resolution_x, sc.render.resolution_y, sc.render.resolution_percentage = RX, int(round(RX/AR/2))*2, int(os.environ.get("PCT", "100"))
 sc.render.fps = FPS; sc.frame_start, sc.frame_end = 1, NF
 sc.view_settings.view_transform = "Standard"; sc.view_settings.look = "None"
-sc.render.image_settings.file_format = "PNG"; sc.render.use_motion_blur = True; sc.render.motion_blur_shutter = 0.4
+sc.render.image_settings.file_format = "PNG"; sc.render.use_motion_blur = True; sc.render.motion_blur_shutter = 0.25
 # 合成：辉光 + 暗角
 sc.use_nodes = True; ct = sc.node_tree
 for n in list(ct.nodes): ct.nodes.remove(n)
