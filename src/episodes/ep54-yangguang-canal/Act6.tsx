@@ -114,7 +114,7 @@ const Sc35: React.FC<{t: number}> = ({t}) => {
 const Sc36: React.FC<{t: number}> = ({t}) => {
   const p = easeInOut(seg(t, S36.d0, S36.d1));
   const k = easeInOut(clamp01(t / bt(8)));
-  const cam: Cam3 = {lon: lerp(114.6, 115.6, k), lat: lerp(35.6, 36.6, k), dist: lerp(1250, 1400, k), pitch: 60, yaw: lerp(-6, 0, k)};
+  const cam: Cam3 = {lon: lerp(114.6, 115.6, k), lat: lerp(35.9, 37.4, k), dist: lerp(1300, 1550, k), pitch: 60, yaw: lerp(-6, 0, k)};
   const lab = easeOut(seg(t, S36.d1, S36.d1 + 0.8));
   const mid = project(cam, 115.75, 37.0, 6);
   const [zx, zy] = project(cam, ...ZHUO, 30);
@@ -160,7 +160,7 @@ const TroopBoat: React.FC<{x: number; y: number; s: number; dir: number; o?: num
 );
 const Sc37: React.FC<{t: number}> = ({t}) => {
   const k = easeInOut(clamp01(t / bt(10)));
-  const cam: Cam3 = {lon: lerp(117.6, 118.4, k), lat: lerp(36.6, 36.0, k), dist: lerp(2350, 2450, k), pitch: 60, yaw: 0};
+  const cam: Cam3 = {lon: lerp(118.0, 118.6, k), lat: lerp(37.0, 37.3, k), dist: lerp(2800, 2950, k), pitch: 58, yaw: 0};
   const flagP = clamp01((t - bt(S37.flag)) / 14);
   const go = seg(t, S37.boat0, S37.boat1);
   const routeP = easeOut(seg(t, 0, 1.2));
@@ -222,7 +222,7 @@ const Sc37: React.FC<{t: number}> = ({t}) => {
 /* ═════════ 第 38 屏：东南——通济渠、邗沟、江南河，一直到余杭 ═════════ */
 const Sc38: React.FC<{t: number}> = ({t}) => {
   const k = easeInOut(clamp01(t / bt(8)));
-  const cam: Cam3 = {lon: lerp(115.4, 117.2, k), lat: lerp(32.6, 31.8, k), dist: lerp(1500, 1650, k), pitch: 62, yaw: 0};
+  const cam: Cam3 = {lon: lerp(115.4, 117.2, k), lat: lerp(33.0, 32.5, k), dist: lerp(1650, 1850, k), pitch: 60, yaw: 0};
   const p1 = easeInOut(seg(t, S38.d0, S38.d1));
   const p2 = easeInOut(seg(t, S38.d1, S38.d2));
   const p3 = easeInOut(seg(t, S38.d2, S38.d3));
@@ -311,7 +311,7 @@ const Sc39: React.FC<{t: number}> = ({t}) => {
 /* ═════════ 第 40 屏：往西，广通渠从潼关接到长安（隋文帝时修） ═════════ */
 const Sc40: React.FC<{t: number}> = ({t}) => {
   const k = easeInOut(clamp01(t / bt(8)));
-  const cam: Cam3 = {lon: lerp(110.6, 110.0, k), lat: lerp(33.2, 33.35, k), dist: lerp(820, 760, k), pitch: 56, yaw: lerp(4, -2, k)};
+  const cam: Cam3 = {lon: lerp(111.0, 110.3, k), lat: lerp(34.75, 34.6, k), dist: lerp(900, 780, k), pitch: 52, yaw: lerp(4, -2, k)};
   const p = easeInOut(seg(t, S40.d0, S40.d1));
   const lab = easeOut(seg(t, S40.d1 - 0.4, S40.d1 + 0.4));
   const mid = project(cam, 109.6, 34.52, 6);

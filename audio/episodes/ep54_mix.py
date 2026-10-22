@@ -12,6 +12,17 @@ N = int(round(dur / fps * SR))
 mix = np.zeros((N, 2), np.float32)
 m0 = int(round(cfg['MUSIC_SEC'] * SR))
 bgm = read('public/music/bgm-1021.mp3')
+# 配乐只有 160 秒：在第 70 小节线（149.6 秒）接回第 20 小节线（42.8 秒），小节对齐 + 0.25 秒交叉淡化，按需循环
+BARS = 2.1365
+LE, LS = int((0.06 + BARS * 70) * SR), int((0.06 + BARS * 20) * SR)
+xf = int(0.25 * SR)
+ext = bgm[:LE].copy()
+while len(ext) < N - m0 + SR:
+    body = bgm[LS - xf : LE].copy()
+    ramp = np.linspace(0, 1, xf)[:, None]
+    ext[-xf:] = ext[-xf:] * (1 - ramp) + body[:xf] * ramp
+    ext = np.concatenate([ext, body[xf:]])
+if len(ext) > len(bgm): bgm = ext
 seg = bgm[: max(0, N - m0)].copy()
 fo = int(1.2 * SR)
 if len(seg) > fo and m0 + len(bgm) > N:
