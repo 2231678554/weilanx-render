@@ -20,11 +20,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/cache@v4
-        with: {path: blender, key: blender-4.2.3}
+        with: {path: bl, key: bl-4.2.3}
       - run: |
-          if [ ! -x blender/blender ]; then curl -sL --retry 3 https://download.blender.org/release/Blender4.2/blender-4.2.3-linux-x64.tar.xz | tar xJ && mv blender-4.2.3-linux-x64 blender; fi
+          if [ ! -x bl/blender ]; then curl -sL --retry 3 https://download.blender.org/release/Blender4.2/blender-4.2.3-linux-x64.tar.xz | tar xJ && mv blender-4.2.3-linux-x64 bl; fi
           (timeout 60 sudo apt-get update -qq || true); timeout 150 sudo apt-get install -y -qq libxi6 libxkbcommon0 libxxf86vm1 libxfixes3 libxrender1 libgl1 libsm6 >/dev/null || true
-      - run: blender/blender -b -noaudio -P ${{ inputs.script }} -o $PWD/out/f_#### -s ${{ matrix.a }} -e ${{ matrix.b }} -a 2>&1 | grep -v "Sample" | tail -n 60
+      - run: bl/blender -b -noaudio -P ${{ inputs.script }} -o $PWD/out/f_#### -s ${{ matrix.a }} -e ${{ matrix.b }} -a 2>&1 | grep -v "Sample" | tail -n 60
       - run: ls out | head; test $(ls out | wc -l) -gt 0
       - uses: actions/upload-artifact@v4
         with: {name: 'bl-${{ matrix.i }}', path: out/, retention-days: 3}
