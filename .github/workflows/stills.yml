@@ -16,6 +16,7 @@ jobs:
   still:
     needs: plan
     runs-on: ubuntu-latest
+    timeout-minutes: 8
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.plan.outputs.matrix) }}
@@ -31,7 +32,7 @@ jobs:
       - run: npm ci
       - run: |
           mkdir -p out
-          npx remotion still src/index.ts ${{ inputs.ep }} out/f$(printf %05d ${{ matrix.f }}).jpg --frame=${{ matrix.f }} --scale=${{ inputs.scale }} --image-format=jpeg --jpeg-quality=85
+          npx remotion still src/index.ts ${{ inputs.ep }} out/f$(printf %05d ${{ matrix.f }}).jpg --frame=${{ matrix.f }} --scale=${{ inputs.scale }} --image-format=jpeg --jpeg-quality=85 --timeout=120000
       - uses: actions/upload-artifact@v4
         with: {name: 'f-${{ matrix.f }}', path: out/, retention-days: 2}
   sheet:

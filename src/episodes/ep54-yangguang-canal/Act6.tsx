@@ -128,7 +128,7 @@ const Sc36: React.FC<{t: number}> = ({t}) => {
       <Label3 cam={cam} at={LUOYANG} name="洛阳" side="left" lift={26} size={38} o={0.85} />
       <Label3 cam={cam} at={[113.6, 34.75]} name="黄河" lift={4} size={30} o={0.8} color="#bfe6ff" />
       <Card x={mid[0] + 230} y={mid[1] - 40} text="永济渠" p={easeOut(seg(t, S36.d0 + 1.5, S36.d0 + 2.3))} size={52} />
-      <Card x={zx + 40} y={zy - 110} text="涿郡" sub="（今北京一带）" p={lab} size={48} />
+      <Card x={zx + 300} y={zy - 20} text="涿郡" sub="（今北京一带）" p={lab} size={48} />
     </AbsoluteFill>
   );
 };
@@ -327,7 +327,7 @@ const Sc40: React.FC<{t: number}> = ({t}) => {
       <Label3 cam={cam} at={LUOYANG} name="洛阳" lift={26} size={38} o={0.9} />
       <Label3 cam={cam} at={TONGGUAN} name="潼关" lift={26} size={36} o={0.9} />
       <Label3 cam={cam} at={CHANGAN} name="长安" side="left" lift={36} size={46} o={lab} />
-      <Card x={mid[0]} y={mid[1] + 50} text="广通渠" sub="（隋文帝时修）" p={lab} size={50} />
+      <Card x={mid[0] + 40} y={mid[1] + 110} text="广通渠" sub="（隋文帝时修）" p={lab} size={50} />
     </AbsoluteFill>
   );
 };

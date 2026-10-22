@@ -58,9 +58,14 @@ export const SHOT: Record<string, [number, number]> = {
   s38: [298, 306],
   s39: [306, 314],
   s40: [314, 322],
+  s41: [322, 331],
+  s42: [331, 340],
+  s43: [340, 348],
+  s44: [348, 356],
+  s45: [356, 366],
 };
 /** 当前已做完的最后一屏 */
-export const LAST = 's40';
+export const LAST = 's45';
 export const MUSIC_BEAT = 0;
 export const DURATION = fbt(SHOT[LAST][1]);
 
@@ -144,6 +149,16 @@ export const CUES: [number, string | null, boolean?][] = [
   [309.5, '第一次被一条河〔串了起来〕。'],
   [314, '往西，还有一条〔广通渠〕进长安，', true],
   [317, '这一段是〔隋文帝〕时就修好的。'],
+  [322, '你看懂了吗？', true],
+  [324, '北有〖突厥铁骑〗，南有〖陈朝旧族〗。'],
+  [331, '在他眼里，大运河是一张', true],
+  [333.5, '〔船能跑〕、〔兵能动〕、〔粮能走〕的军事漕运网。'],
+  [340, '也是随时南下、', true],
+  [341.5, '敲打〖江南世族〗的皇权通道。'],
+  [348, '可这条造福后世千年的〔大动脉〕，', true],
+  [350.5, '当年却是「〖立国不立民〗」。'],
+  [356, '〔通济渠〕一段就征了〖一百多万人〗；', true],
+  [359, '修永济渠时，男人不够用，就〖征妇女〗。'],
 ];
 /** 第 5 屏：隋吞陈（屏内拍） */
 export const S5 = {swallow: 3.5, done: 5.2};
@@ -176,6 +191,10 @@ export const S37 = {flag: 2.5, boat0: 3.2, boat1: 9.4};
 export const S38 = {d0: 0.4, d1: 2.2, d2: 3.4, d3: 5.2};
 export const S39 = {r0: 0.3, net0: 3.9, net1: 5.6, flash: 5.8};
 export const S40 = {d0: 0.6, d1: 3.4};
+export const S41 = {turk: 2.4, chen: 4.6};
+export const S42 = {c1: 1.0, c2: 2.6, c3: 4.2, flash: 5.8};
+export const S43 = {gong: 0.8, down: 2.0, bow: 4.8};
+export const S45 = {card: 1.4, drum: 4.4};
 
 /** 第 2 屏三张标签贴上去的拍（绝对拍） */
 export const TAG_BEATS = [7.5, 9.5, 11.5];
@@ -293,9 +312,20 @@ export const SFX: [string, number, number][] = [
   ...[0, 1, 2, 3].map((i) => s('glint', 306 + S39.r0 + i, 0.4 + i * 0.05)), s('riser', 306 + S39.net0, 0.5), s('bigdrum', 306 + S39.flash, 1), s('impact', 306 + S39.flash, 0.6),
   // 第 40 屏：轻鼓
   s('drum', 314 + S40.d0, 0.3), s('drum', 316, 0.28), s('stamp', 314 + S40.d1, 0.45), s('drum', 318, 0.3), s('drum', 320, 0.28),
+  // 第 41 屏：战鼓一声（突厥铁骑）
+  s('drum', 322, 0.3), s('gallop', 322 + S41.turk - 0.2, 0.45), s('bigdrum', 322 + S41.turk, 0.95), s('flag', 322 + S41.chen, 0.45), s('drum', 322 + S41.chen, 0.35),
+  // 第 42 屏：三声重鼓，一声亮一格
+  s('bigdrum', 331 + S42.c1, 0.9), s('water', 331 + S42.c1, 0.45), s('bigdrum', 331 + S42.c2, 0.9), s('clang', 331 + S42.c2 + 0.1, 0.4),
+  s('bigdrum', 331 + S42.c3, 0.95), ...[0.3, 0.6, 0.9, 1.2].map((d) => s('thud', 331 + S42.c3 + d, 0.35)), s('glint', 331 + S42.flash, 0.6), s('impact', 331 + S42.flash, 0.45),
+  // 第 43 屏：码头锣声
+  s('water', 340, 0.35), s('dang', 340 + S43.gong, 0.9), s('dang', 340 + S43.gong + 1.5, 0.7), s('steps', 340 + S43.down, 0.5), s('steps', 340 + S43.down + 1.6, 0.45), s('drum', 340 + S43.bow, 0.4),
+  // 第 44 屏：配乐压低，风声
+  s('lowdrum', 348, 0.7), s('wind', 348.5, 0.45), s('lowdrum', 352, 0.6), s('wind', 352.5, 0.35),
+  // 第 45 屏：慢镜头 + 重鼓
+  s('lowdrum', 356, 0.8), s('bigdrum', 356 + S45.card, 0.9), s('stamp', 356 + S45.card, 0.5), s('steps', 357, 0.35), s('steps', 360, 0.35), s('bigdrum', 356 + S45.drum, 0.9), s('wind', 361, 0.35),
 ];
 /** 配乐压低：[起拍, 止拍, 增益] */
-export const DUCK: [number, number, number][] = [[144 + S19.out - 0.15, 144 + S19.out + 1, 0.05], [248, 256, 0.32]];
+export const DUCK: [number, number, number][] = [[144 + S19.out - 0.15, 144 + S19.out + 1, 0.05], [248, 256, 0.32], [348, 366, 0.34]];
 /** 环境声：运河水声（第 1–3 屏），[文件, 起帧, 止帧, 音量] */
 export const AMBIENCE: [string, number, number, number][] = [
   [`${A}/water.wav`, 0, fbt(SHOT.s3[0]) + S3.zoomA, 0.22],
