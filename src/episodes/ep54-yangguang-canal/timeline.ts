@@ -27,9 +27,15 @@ export const SHOT: Record<string, [number, number]> = {
   s8: [56, 64],
   s9: [64, 72],
   s10: [72, 80],
+  s11: [80, 88],
+  s12: [88, 96],
+  s13: [96, 104],
+  s14: [104, 112],
+  s15: [112, 120],
+  s16: [120, 128],
 };
 /** 当前已做完的最后一屏 */
-export const LAST = 's10';
+export const LAST = 's16';
 export const MUSIC_BEAT = 0;
 export const DURATION = fbt(SHOT[LAST][1]);
 
@@ -55,11 +61,27 @@ export const CUES: [number, string | null, boolean?][] = [
   [66.5, '他奏乐受贺，〖照单全收〗。'],
   [72, '创业皇帝隋文帝，看得〖火冒三丈〗：', true],
   [74.5, '皇帝还在，〖朝什么太子〗？'],
+  [80, '老二〔晋王杨广〕，立刻嗅到了〖机会〗！', true],
+  [82.5, '灭陈时，他挂名〔元帅〕攒下了军功。'],
+  [88, '回到家，他专跟哥哥〖反着演〗：', true],
+  [90.5, '爹娘来府上，只见又老又丑的侍女。'],
+  [96, '美貌的姬妾全〖藏进了别屋〗，', true],
+  [98.5, '〔琴弦〕故意弄断，上面的灰也不擦。'],
+  [104, '这波操作，拿下了〔独孤皇后〕和权臣〔杨素〕。', true],
+  [106.5, '公元〔600 年〕，杨勇被废，〖杨广当上太子〗。'],
+  [112, '杨勇想见亲爹〖喊冤〗，见不着，', true],
+  [114.5, '逼得爬到宫外树上〖大喊〗。'],
+  [120, '杨素一句话：', true],
+  [122, '「他被〖疯鬼附身〗了，救不回来了。」'],
 ];
 /** 第 5 屏：隋吞陈（屏内拍） */
 export const S5 = {swallow: 3.5, done: 5.2};
 /** 第 10 屏：拍案（屏内拍） */
 export const S10 = {slam: 2};
+export const S13 = {bump1: 1.3, bump2: 2.1};
+export const S14 = {edict: 0.8, year: 3.0, crown: 3.4};
+export const S15 = {shout: 1.8, turn: 5.0};
+export const S16 = {circle: 2.3, wave: 4.4, close: 5.0};
 
 /** 第 2 屏三张标签贴上去的拍（绝对拍） */
 export const TAG_BEATS = [7.5, 9.5, 11.5];
@@ -111,6 +133,18 @@ export const SFX: [string, number, number][] = [
   s('riser', 72 + S10.slam - 1.6, 0.35),
   s('slap', 72 + S10.slam, 1), s('bigdrum', 72 + S10.slam, 1), s('impact', 72 + S10.slam, 0.8),
   s('clink', 72 + S10.slam + 1.2, 0.7), s('clink', 72 + S10.slam + 2.1, 0.45),
+  // 第 11 屏：两个镜头一拍一切
+  s('drum', 80, 0.35), s('tick', 82.2, 0.6), s('whoosh', 83.8, 0.6), s('bigdrum', 84, 0.8), s('gallop', 84, 0.7), s('clang', 85.5, 0.35),
+  // 第 12 屏：轻鼓
+  s('drum', 88, 0.35), s('drum', 90, 0.3), s('clink', 91.2, 0.4), s('drum', 92.2, 0.35), s('drum', 93.2, 0.3),
+  // 第 13 屏：门板「咚咚」两声
+  s('thud', 96 + S13.bump1, 1), s('thud', 96 + S13.bump2, 1), s('drum', 96 + S13.bump2, 0.5), s('pluck', 99, 0.6),
+  // 第 14 屏：诏书展开声
+  s('scroll', 104 + S14.edict, 0.9), s('stamp', 104 + S14.year, 0.8), s('whoosh', 104 + S14.crown, 0.5), s('bigdrum', 104 + S14.crown + 2, 0.8),
+  // 第 15 屏：喊声回响
+  s('shout', 112 + S15.shout, 0.85), s('drum', 112 + S15.turn, 0.5),
+  // 第 16 屏：关门闷响
+  s('drum', 120, 0.3), s('whoosh', 120 + S16.close, 0.4), s('doorslam', 120 + S16.close + 1.1, 1), s('bigdrum', 120 + S16.close + 1.1, 0.7),
 ];
 /** 环境声：运河水声（第 1–3 屏），[文件, 起帧, 止帧, 音量] */
 export const AMBIENCE: [string, number, number, number][] = [
