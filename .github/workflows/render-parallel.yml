@@ -16,6 +16,10 @@ on:
         description: 放大倍数（1=1080p，2=4K）
         required: true
         default: '2'
+      range:
+        description: 只渲某段帧（如 5964-6389，留空=全片）
+        required: false
+        default: ''
 jobs:
   plan:
     runs-on: ubuntu-latest
@@ -31,7 +35,7 @@ jobs:
           N=$(npx remotion compositions src/index.ts 2>/dev/null | awk -v id="${{ inputs.ep }}" '$1==id{print $4}')
           echo "frames=$N"
           test -n "$N"
-          node -e "const n=+process.argv[1],k=+process.argv[2];const s=Math.ceil(n/k);const m=[];for(let i=0;i*s<n;i++)m.push({i,a:i*s,b:Math.min(n,(i+1)*s)-1});console.log('matrix='+JSON.stringify({include:m}))" "$N" "${{ inputs.chunks }}" >> $GITHUB_OUTPUT
+          node -e "let n=+process.argv[1],k=+process.argv[2],r=process.argv[3]||'';let A=0,B=n-1;if(r){[A,B]=r.split('-').map(Number)}const L=B-A+1,s=Math.ceil(L/k);const m=[];for(let i=0;i*s<L;i++)m.push({i,a:A+i*s,b:Math.min(B,A+(i+1)*s-1)});console.log('matrix='+JSON.stringify({include:m}))" "$N" "${{ inputs.chunks }}" "${{ inputs.range }}" >> $GITHUB_OUTPUT
   render:
     needs: plan
     runs-on: ubuntu-latest
