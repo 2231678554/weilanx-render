@@ -1,0 +1,41 @@
+name: Blender render
+on:
+  workflow_dispatch:
+    inputs:
+      script: {description: 场景脚本, required: true, default: blender/scene.py}
+      frames: {description: 总帧数, required: true, default: '120'}
+      chunks: {description: 并行段数, required: true, default: '12'}
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs: {matrix: '${{ steps.p.outputs.matrix }}'}
+    steps:
+      - id: p
+        run: node -e "const n=+process.argv[1],k=+process.argv[2],s=Math.ceil(n/k),m=[];for(let i=0;i*s<n;i++)m.push({i,a:i*s+1,b:Math.min(n,(i+1)*s)});console.log('matrix='+JSON.stringify({include:m}))" ${{ inputs.frames }} ${{ inputs.chunks }} >> $GITHUB_OUTPUT
+  render:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy: {fail-fast: true, matrix: '${{ fromJson(needs.plan.outputs.matrix) }}'}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with: {path: blender, key: blender-4.2.3}
+      - run: |
+          if [ ! -x blender/blender ]; then curl -sL --retry 3 https://download.blender.org/release/Blender4.2/blender-4.2.3-linux-x64.tar.xz | tar xJ && mv blender-4.2.3-linux-x64 blender; fi
+          (timeout 60 sudo apt-get update -qq || true); timeout 150 sudo apt-get install -y -qq libxi6 libxkbcommon0 libxxf86vm1 libxfixes3 libxrender1 libgl1 libsm6 >/dev/null || true
+      - run: blender/blender -b -noaudio -P ${{ inputs.script }} -o $PWD/out/f_#### -s ${{ matrix.a }} -e ${{ matrix.b }} -a 2>&1 | grep -v "Sample" | tail -n 60
+      - run: ls out | head; test $(ls out | wc -l) -gt 0
+      - uses: actions/upload-artifact@v4
+        with: {name: 'bl-${{ matrix.i }}', path: out/, retention-days: 3}
+  join:
+    needs: render
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: {pattern: 'bl-*', path: out, merge-multiple: true}
+      - run: |
+          (timeout 60 sudo apt-get update -qq || true); for i in 1 2 3; do timeout 150 sudo apt-get install -y -qq ffmpeg >/dev/null && break; done
+          ffmpeg -v error -framerate 24 -start_number 1 -i out/f_%04d.png -c:v libx264 -crf 16 -preset slow -pix_fmt yuv420p -movflags +faststart blender.mp4
+      - uses: actions/upload-artifact@v4
+        with: {name: blender-video, path: blender.mp4, retention-days: 7}
