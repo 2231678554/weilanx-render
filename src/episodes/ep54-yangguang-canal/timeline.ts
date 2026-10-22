@@ -39,9 +39,15 @@ export const SHOT: Record<string, [number, number]> = {
   s20: [152, 160],
   s21: [160, 168],
   s22: [168, 176],
+  s23: [176, 184],
+  s24: [184, 192],
+  s25: [192, 200],
+  s26: [200, 208],
+  s27: [208, 216],
+  s28: [216, 224],
 };
 /** 当前已做完的最后一屏 */
-export const LAST = 's22';
+export const LAST = 's28';
 export const MUSIC_BEAT = 0;
 export const DURATION = fbt(SHOT[LAST][1]);
 
@@ -91,6 +97,17 @@ export const CUES: [number, string | null, boolean?][] = [
   [162.5, '营建〔东都洛阳〕。'],
   [168, '放着长安不住，为啥要建洛阳？', true],
   [170.5, '因为——〖饭不够吃〗！'],
+  [176, '关中的〔水利〕，', true],
+  [178.5, '经过几百年战乱，早就〖荒废〗了。'],
+  [184, '一遇灾年，皇帝就得带着人去洛阳「〔就食〕」。', true],
+  [186.5, '〔隋文帝〕就亲自这么干过。'],
+  [192, '后来唐朝皇帝也常这么跑，', true],
+  [194.5, '被人笑作「〖逐粮天子〗」。'],
+  [200, '那为啥不干脆〖迁都洛阳〗？', true],
+  [208, '因为隋唐立国的根本在〔关中〕：', true],
+  [210.5, '〔均田制〕、〔府兵制〕。'],
+  [216, '皇室又是〔关陇贵族〕出身，', true],
+  [218.5, '长安这个军事大本营，〖绝对不能丢〗。'],
 ];
 /** 第 5 屏：隋吞陈（屏内拍） */
 export const S5 = {swallow: 3.5, done: 5.2};
@@ -106,6 +123,12 @@ export const S19 = {enter: 2.6, shut: 4.4, out: 6.2, note: 4.0};
 export const S20 = {cut: 4};
 export const S21 = {rise: 2.6};
 export const S22 = {growl: 3.4, clash: 4.6};
+export const S23 = {crack: 1.0, gust: 4.2};
+export const S24 = {rein: 3.4};
+export const S25 = {label: 2.6};
+export const S26 = {q: 1.4};
+export const S27 = {card1: 2.9, card2: 4.4};
+export const S28 = {guard: 3.2};
 
 /** 第 2 屏三张标签贴上去的拍（绝对拍） */
 export const TAG_BEATS = [7.5, 9.5, 11.5];
@@ -185,6 +208,18 @@ export const SFX: [string, number, number][] = [
   s('drum', 160, 0.35), s('build', 160 + S21.rise, 0.9), s('stamp', 160 + S21.rise + 2.4, 0.7),
   // 第 22 屏：「咕」肚子叫 + 重鼓
   s('drum', 168, 0.3), s('growl', 168 + S22.growl, 0.9), s('clink', 168 + S22.clash, 0.9), s('bigdrum', 168 + S22.clash, 1), s('impact', 168 + S22.clash, 0.6),
+  // 第 23 屏：风声
+  s('wind', 176, 0.7), s('crack', 176 + S23.crack, 0.45), s('wind', 176 + S23.gust, 0.6),
+  // 第 24 屏：马蹄 + 脚步
+  s('steps', 184, 0.55), s('gallop', 184.3, 0.3), s('steps', 187, 0.5), s('drum', 184 + S24.rein, 0.4), s('steps', 189.5, 0.45),
+  // 第 25 屏：轻快鼓点
+  s('trot', 192, 0.7), s('trot', 196, 0.65), s('stamp', 192 + S25.label, 0.6),
+  // 第 26 屏：疑问
+  s('drum', 200, 0.3), s('query', 200 + S26.q, 0.9), s('drum', 204, 0.3),
+  // 第 27 屏：两声重鼓
+  s('bigdrum', 208 + S27.card1, 0.9), s('stamp', 208 + S27.card1, 0.5), s('bigdrum', 208 + S27.card2, 0.9), s('stamp', 208 + S27.card2, 0.5),
+  // 第 28 屏：鼓 + 旗
+  s('drum', 216, 0.4), s('flag', 216.2, 0.55), s('drum', 218, 0.35), s('drum', 220, 0.4), s('clang', 216 + S28.guard, 0.4), s('drum', 222, 0.35),
 ];
 /** 配乐压低：[起拍, 止拍, 增益] */
 export const DUCK: [number, number, number][] = [[144 + S19.out - 0.15, 144 + S19.out + 1, 0.05]];

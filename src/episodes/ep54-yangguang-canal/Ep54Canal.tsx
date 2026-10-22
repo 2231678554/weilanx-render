@@ -8,6 +8,7 @@ import {Opening} from './Opening';
 import {Act1, ACT1_START} from './Act1';
 import {Act2, ACT2_START} from './Act2';
 import {Act3, ACT3_START} from './Act3';
+import {Act4, ACT4_START} from './Act4';
 import {CUES, fbt, SHOT} from './timeline';
 
 /** ep54 杨广与大运河 */
@@ -18,7 +19,8 @@ export const Ep54Canal: React.FC = () => {
   const inTitle = f >= titleAt && f < ACT1_START;
   const inAct1 = f >= ACT1_START && f < ACT2_START;
   const inAct2 = f >= ACT2_START && f < ACT3_START;
-  const inAct3 = f >= ACT3_START;
+  const inAct3 = f >= ACT3_START && f < ACT4_START;
+  const inAct4 = f >= ACT4_START;
   return (
     <AbsoluteFill style={{background: L.night, overflow: 'hidden'}}>
       <Audio src={staticFile('audio/ep54-yangguang-canal/mix.wav')} />
@@ -26,6 +28,7 @@ export const Ep54Canal: React.FC = () => {
       {inAct1 && <Act1 f={f} />}
       {inAct2 && <Act2 f={f} />}
       {inAct3 && <Act3 f={f} />}
+      {inAct4 && <Act4 f={f} />}
       {inTitle && (
         <>
           <NightBg f={f} glow={[50, 56]} strength={1.3} />
