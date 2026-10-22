@@ -16,16 +16,24 @@ const MAXM = 6000;
 
 let HEIGHTS: Uint16Array | null = null;
 let TEX: THREE.Texture | null = null;
+let LAND: HTMLImageElement | null = null;
 export const useTerrainData = () => {
-  const [ready, setReady] = useState(!!(HEIGHTS && TEX));
-  const [handle] = useState(() => (HEIGHTS && TEX ? null : delayRender('terrain3d')));
+  const [ready, setReady] = useState(!!(HEIGHTS && TEX && LAND));
+  const [handle] = useState(() => (HEIGHTS && TEX && LAND ? null : delayRender('terrain3d')));
   useEffect(() => {
     if (!handle) return;
     Promise.all([
       fetch(staticFile('images/lamplight/height-china.bin')).then((r) => r.arrayBuffer()),
       new Promise<THREE.Texture>((res, rej) => new THREE.TextureLoader().load(staticFile('images/lamplight/terrain3d-china.jpg'), res, undefined, rej)),
+      new Promise<HTMLImageElement>((res, rej) => {
+        const im = new Image();
+        im.onload = () => res(im);
+        im.onerror = rej;
+        im.src = staticFile('images/lamplight/land-china.png');
+      }),
     ])
-      .then(([buf, tex]) => {
+      .then(([buf, tex, land]) => {
+        LAND = land;
         HEIGHTS = new Uint16Array(buf);
         tex.colorSpace = THREE.SRGBColorSpace;
         tex.anisotropy = 8;
@@ -84,15 +92,50 @@ const CamSync: React.FC<{c: Cam3}> = ({c}) => {
   return null;
 };
 
+let GEO_: THREE.BufferGeometry | null = null;
+const terrainGeo = () => {
+  if (GEO_) return GEO_;
+  const g = new THREE.PlaneGeometry(MAP_W, MAP_H, GW - 1, GH - 1);
+  g.rotateX(-Math.PI / 2);
+  const pos = g.attributes.position as THREE.BufferAttribute;
+  for (let j = 0; j < GH; j++) for (let i = 0; i < GW; i++) pos.setY(j * GW + i, (HEIGHTS![j * GW + i] / 65535) * MAXM * EXAG);
+  g.computeVertexNormals();
+  GEO_ = g;
+  return g;
+};
+
+/** 贴在地形上的一层半透明彩绘（疆域着色、箭头）：paint 在 2048×1536 画布上画，px 把经纬度换成画布坐标；默认只留陆地 */
+export type Px = (lon: number, lat: number) => [number, number];
+export const Drape: React.FC<{paint: (g: CanvasRenderingContext2D, px: Px) => void; dep: string; opacity?: number; landOnly?: boolean}> = ({paint, dep, opacity = 1, landOnly = true}) => {
+  const tex = useMemo(() => {
+    const c = document.createElement('canvas');
+    c.width = 2048;
+    c.height = 1536;
+    const g = c.getContext('2d')!;
+    const k = 2048 / MAP_W;
+    paint(g, (lo, la) => {
+      const [x, y] = proj(lo, la);
+      return [x * k, y * k];
+    });
+    if (landOnly && LAND) {
+      g.globalCompositeOperation = 'destination-in';
+      g.drawImage(LAND, 0, 0, 2048, 1536);
+    }
+    const t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = 8;
+    return t;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dep]);
+  return (
+    <mesh geometry={terrainGeo()} position={[0, 1.5, 0]} renderOrder={2}>
+      <meshStandardMaterial map={tex} transparent opacity={opacity} depthWrite={false} polygonOffset polygonOffsetFactor={-4} roughness={1} metalness={0} />
+    </mesh>
+  );
+};
+
 const Terrain: React.FC = () => {
-  const geo = useMemo(() => {
-    const g = new THREE.PlaneGeometry(MAP_W, MAP_H, GW - 1, GH - 1);
-    g.rotateX(-Math.PI / 2);
-    const pos = g.attributes.position as THREE.BufferAttribute;
-    for (let j = 0; j < GH; j++) for (let i = 0; i < GW; i++) pos.setY(j * GW + i, (HEIGHTS![j * GW + i] / 65535) * MAXM * EXAG);
-    g.computeVertexNormals();
-    return g;
-  }, []);
+  const geo = terrainGeo();
   return (
     <mesh geometry={geo}>
       <meshStandardMaterial map={TEX!} roughness={1} metalness={0} />

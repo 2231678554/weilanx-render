@@ -5,6 +5,7 @@ import {panelAt} from '../../library/lamplight/scenes';
 import {Embers, Flash, Narration, NightBg, TitleCard} from '../../library/lamplight/stage';
 import {L, LF} from '../../library/lamplight/theme';
 import {Opening} from './Opening';
+import {Act1, ACT1_START} from './Act1';
 import {CUES, fbt, SHOT} from './timeline';
 
 /** ep54 杨广与大运河 */
@@ -12,11 +13,13 @@ export const Ep54Canal: React.FC = () => {
   const f = useCurrentFrame();
   const titleAt = fbt(SHOT.title[0]);
   const panel = panelAt(CUES, fbt, f);
-  const inTitle = f >= titleAt;
+  const inTitle = f >= titleAt && f < ACT1_START;
+  const inAct1 = f >= ACT1_START;
   return (
     <AbsoluteFill style={{background: L.night, overflow: 'hidden'}}>
       <Audio src={staticFile('audio/ep54-yangguang-canal/mix.wav')} />
-      {!inTitle && <Opening f={f} />}
+      {f < titleAt && <Opening f={f} />}
+      {inAct1 && <Act1 f={f} />}
       {inTitle && (
         <>
           <NightBg f={f} glow={[50, 56]} strength={1.3} />
@@ -30,6 +33,7 @@ export const Ep54Canal: React.FC = () => {
       )}
       <Flash f={f} at={0} dur={8} peak={0.85} />
       <Flash f={f} at={titleAt} />
+      <Flash f={f} at={ACT1_START} dur={8} peak={0.5} />
     </AbsoluteFill>
   );
 };

@@ -14,15 +14,24 @@ export const fbt = (b: number) => fr(beatSec(b));
 export const B = BEAT * FPS; // 一拍的帧数
 
 /** 每屏起止（拍）：分镜 0:00–0:03 / 0:03–0:07 / 0:07–0:11 / 0:11–0:15，对齐到拍 */
-export const SHOT: Record<'s1' | 's2' | 's3' | 's4' | 'title', [number, number]> = {
+export const SHOT: Record<string, [number, number]> = {
   s1: [0, 6],
   s2: [6, 14],
   s3: [14, 22],
   s4: [22, 28],
   title: [28, 32],
+  // 第一幕：每屏 8 拍（约 4.25 秒）
+  s5: [32, 40],
+  s6: [40, 48],
+  s7: [48, 56],
+  s8: [56, 64],
+  s9: [64, 72],
+  s10: [72, 80],
 };
+/** 当前已做完的最后一屏 */
+export const LAST = 's10';
 export const MUSIC_BEAT = 0;
-export const DURATION = fbt(SHOT.title[1]);
+export const DURATION = fbt(SHOT[LAST][1]);
 
 /** 字幕：[拍, 文字, 是否另起一屏]；〔〕金、〖〗红 */
 export const CUES: [number, string | null, boolean?][] = [
@@ -34,7 +43,23 @@ export const CUES: [number, string | null, boolean?][] = [
   [22, '要揭开谜底，', true],
   [23.5, '还得从他夺下〔太子之位〕那一刻讲起。'],
   [28, null],
+  [32, '隋文帝杨坚灭了〔陈朝〕，', true],
+  [34.5, '结束了〔近三百年〕的分裂。'],
+  [40, '他还是个「〖妻管严〗」：', true],
+  [42.5, '后宫只有〔独孤皇后〕，儿子全是她生的。'],
+  [48, '太子〔杨勇〕是个〔文艺青年〕：', true],
+  [50.5, '爱读书，会作诗，性子直。'],
+  [56, '可他〖讲究排场〗，', true],
+  [58, '一副蜀地铠甲也要装饰得〔金光闪闪〕。'],
+  [64, '〔冬至〕大节，百官跑去东宫朝贺，', true],
+  [66.5, '他奏乐受贺，〖照单全收〗。'],
+  [72, '创业皇帝隋文帝，看得〖火冒三丈〗：', true],
+  [74.5, '皇帝还在，〖朝什么太子〗？'],
 ];
+/** 第 5 屏：隋吞陈（屏内拍） */
+export const S5 = {swallow: 3.5, done: 5.2};
+/** 第 10 屏：拍案（屏内拍） */
+export const S10 = {slam: 2};
 
 /** 第 2 屏三张标签贴上去的拍（绝对拍） */
 export const TAG_BEATS = [7.5, 9.5, 11.5];
@@ -70,6 +95,22 @@ export const SFX: [string, number, number][] = [
   s('drum', 27, 0.35),
   // 标题卡：一声重鼓
   s('bigdrum', 28, 1), s('impact', 28, 0.7),
+  // 第 5 屏：隋吞陈，合拢一声重鼓
+  s('drum', 32, 0.4), s('whoosh', 32 + S5.swallow - 0.6, 0.6), s('riser', 32 + S5.swallow - 1.5, 0.3),
+  s('bigdrum', 32 + S5.done, 1), s('impact', 32 + S5.done, 0.6), s('stamp', 32 + S5.done + 0.6, 0.7),
+  // 第 6 屏：独孤皇后双手按膝，轻鼓
+  s('drum', 40, 0.35), s('thud', 41, 0.7), s('drum', 41, 0.5), s('gulp', 43.5, 0.6),
+  // 第 7 屏：吟诵、拍手叫好
+  s('brush', 48.2, 0.25), s('clap', 51.5, 0.7), s('clap', 53, 0.6), s('drum', 52, 0.3),
+  // 第 8 屏：铠甲反光一闪，刀子「当」
+  s('glint', 57.5, 0.7), s('glint', 59.2, 0.5), s('dang', 62.5, 0.9), s('drum', 62.5, 0.4),
+  // 第 9 屏：鼓乐声
+  ...[64, 65, 66, 67, 68, 69, 70, 71].map((b) => s('drum', b, b % 2 ? 0.28 : 0.42)),
+  ...[64.5, 66.5, 68.5, 70.5].map((b) => s('bell', b, 0.35)),
+  // 第 10 屏：慢镜头拍案 + 重鼓
+  s('riser', 72 + S10.slam - 1.6, 0.35),
+  s('slap', 72 + S10.slam, 1), s('bigdrum', 72 + S10.slam, 1), s('impact', 72 + S10.slam, 0.8),
+  s('clink', 72 + S10.slam + 1.2, 0.7), s('clink', 72 + S10.slam + 2.1, 0.45),
 ];
 /** 环境声：运河水声（第 1–3 屏），[文件, 起帧, 止帧, 音量] */
 export const AMBIENCE: [string, number, number, number][] = [
