@@ -69,6 +69,7 @@ import {Ep53Curfew} from './episodes/ep53-changan-curfew/Ep53Curfew';
 import {Ep53Cover34, Ep53Cover43} from './episodes/ep53-changan-curfew/Cover';
 import {DURATION as EP54_DURATION, FPS as EP54_FPS, H as EP54_H, W as EP54_W} from './episodes/ep54-yangguang-canal/timeline';
 import {Ep54Canal} from './episodes/ep54-yangguang-canal/Ep54Canal';
+import {Ep54Cover34, Ep54Cover43} from './episodes/ep54-yangguang-canal/Cover';
 import {ReliefBake} from './episodes/ep52-tang-beacon/ReliefBake';
 import {Ep28Relay} from './episodes/ep28-express-relay/Ep28Relay';
 import {Ep28CoverTall} from './episodes/ep28-express-relay/CoverTall';
@@ -223,6 +224,8 @@ export const Root: React.FC = () => (
       <Still id="ep53-cover-34" component={Ep53Cover34} width={1080} height={1440} />
       <Still id="ep53-cover-43" component={Ep53Cover43} width={1440} height={1080} />
       <Composition id="ep54-yangguang-canal" component={Ep54Canal} durationInFrames={EP54_DURATION} fps={EP54_FPS} width={EP54_W} height={EP54_H} />
+      <Still id="ep54-cover-34" component={Ep54Cover34} width={1080} height={1440} />
+      <Still id="ep54-cover-43" component={Ep54Cover43} width={1440} height={1080} />
       <Composition id="ep52-tang-beacon" component={Ep52Beacon} durationInFrames={EP52_DURATION} fps={EP52_FPS} width={EP52_W} height={EP52_H} />
       <Composition id="ep28-express-relay" component={Ep28Relay} durationInFrames={EP28_DURATION} fps={EP28_FPS} width={EP28_W} height={EP28_H} />
       <Still id="ep28-express-relay-cover-tall" component={Ep28CoverTall} width={1080} height={1440} />

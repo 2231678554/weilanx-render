@@ -24,7 +24,7 @@ while len(ext) < N - m0 + SR:
     ext = np.concatenate([ext, body[xf:]])
 if len(ext) > len(bgm): bgm = ext
 seg = bgm[: max(0, N - m0)].copy()
-fo = int(1.2 * SR)
+fo = int(3.0 * SR)
 if len(seg) > fo and m0 + len(bgm) > N:
     seg[-fo:] *= np.linspace(1, 0, fo)[:, None]
 gain = np.ones(len(seg), np.float32)

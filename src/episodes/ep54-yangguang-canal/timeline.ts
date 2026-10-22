@@ -418,7 +418,7 @@ export const SFX: [string, number, number][] = [
   s('water', 523, 0.35), s('lowdrum', 523 + S64.q, 0.8),
 ];
 /** 配乐压低：[起拍, 止拍, 增益] */
-export const DUCK: [number, number, number][] = [[144 + S19.out - 0.15, 144 + S19.out + 1, 0.05], [248, 256, 0.32], [348, 366, 0.34], [454, 464, 0.3], [523 + S64.q - 1, 523 + S64.q, 0.05]];
+export const DUCK: [number, number, number][] = [[144 + S19.out - 0.15, 144 + S19.out + 1, 0.05], [248, 256, 0.32], [348, 366, 0.34], [454, 464, 0.3], [523 + S64.q - 1, 523 + S64.q, 0.05], [523 + S64.q, 533, 0.4]];
 /** 环境声：运河水声（第 1–3 屏），[文件, 起帧, 止帧, 音量] */
 export const AMBIENCE: [string, number, number, number][] = [
   [`${A}/water.wav`, 0, fbt(SHOT.s3[0]) + S3.zoomA, 0.22],

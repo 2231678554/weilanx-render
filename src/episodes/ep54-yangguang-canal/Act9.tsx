@@ -138,7 +138,7 @@ const Sc59: React.FC<{t: number}> = ({t}) => {
             <path d="M-32 -320 Q110 -250 90 -40 L-32 -40 Z" fill="#f4ecd8" stroke="#a89878" strokeWidth={4} />
             {[0, 1, 2].map((i) => <rect key={i} x={-220 + i * 70} y={-80} width={60} height={50} rx={10} fill="#c8a060" stroke="#6a4a20" strokeWidth={3} />)}
           </g>
-          <text x={960} y={300} textAnchor="middle" fontFamily={LF.serif} fontWeight={900} fontSize={56} fill="#3a1a0a" opacity={0.85}>同一段河，一千四百年</text>
+          <text x={960} y={985} textAnchor="middle" fontFamily={LF.serif} fontWeight={900} fontSize={56} fill="#f4ecd8" stroke="rgba(0,0,0,0.55)" strokeWidth={6} style={{paintOrder: "stroke"}} opacity={0.92}>同一段河，一千四百年</text>
         </Svg>
       </AbsoluteFill>}
       <Vignette k={0.4} />
