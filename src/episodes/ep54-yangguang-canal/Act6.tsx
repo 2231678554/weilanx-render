@@ -114,7 +114,7 @@ const Sc35: React.FC<{t: number}> = ({t}) => {
 const Sc36: React.FC<{t: number}> = ({t}) => {
   const p = easeInOut(seg(t, S36.d0, S36.d1));
   const k = easeInOut(clamp01(t / bt(8)));
-  const cam: Cam3 = {lon: lerp(114.6, 115.6, k), lat: lerp(35.9, 37.4, k), dist: lerp(1300, 1550, k), pitch: 60, yaw: lerp(-6, 0, k)};
+  const cam: Cam3 = {lon: lerp(114.6, 115.6, k), lat: lerp(36.2, 38.3, k), dist: lerp(1300, 1500, k), pitch: 62, yaw: lerp(-6, 0, k)};
   const lab = easeOut(seg(t, S36.d1, S36.d1 + 0.8));
   const mid = project(cam, 115.75, 37.0, 6);
   const [zx, zy] = project(cam, ...ZHUO, 30);
@@ -254,7 +254,7 @@ const Sc38: React.FC<{t: number}> = ({t}) => {
       <Label3 cam={cam} at={LUOYANG} name="洛阳" side="left" lift={26} size={38} />
       <Label3 cam={cam} at={JIANGDU} name="江都" side="left" lift={22} size={34} o={0.9} />
       {[['淮河', [114.0, 32.45]], ['长江', [115.6, 29.95]], ['钱塘江', [118.6, 29.5]]].map(([n, at]) => <Label3 key={n as string} cam={cam} at={at as LL} name={n as string} lift={4} size={30} o={0.85} color="#bfe6ff" />)}
-      <Card x={c1[0]} y={c1[1] - 120} text="通济渠" p={easeOut(seg(t, S38.d0 + 0.8, S38.d0 + 1.5))} />
+      <Card x={c1[0]} y={c1[1] + 24} text="通济渠" p={easeOut(seg(t, S38.d0 + 0.8, S38.d0 + 1.5))} />
       <Card x={c2[0] + 150} y={c2[1] - 50} text="邗沟" p={easeOut(seg(t, S38.d1 + 0.3, S38.d1 + 1))} />
       <Card x={c3[0] + 170} y={c3[1] - 50} text="江南河" p={easeOut(seg(t, S38.d2 + 0.6, S38.d2 + 1.3))} />
       <Card x={yx - 40} y={yy + 40} text="余杭" sub="（今杭州）" p={easeOut(seg(t, S38.d3, S38.d3 + 0.7))} size={44} />
@@ -311,7 +311,7 @@ const Sc39: React.FC<{t: number}> = ({t}) => {
 /* ═════════ 第 40 屏：往西，广通渠从潼关接到长安（隋文帝时修） ═════════ */
 const Sc40: React.FC<{t: number}> = ({t}) => {
   const k = easeInOut(clamp01(t / bt(8)));
-  const cam: Cam3 = {lon: lerp(111.0, 110.3, k), lat: lerp(34.75, 34.6, k), dist: lerp(900, 780, k), pitch: 52, yaw: lerp(4, -2, k)};
+  const cam: Cam3 = {lon: lerp(111.0, 110.3, k), lat: lerp(34.75, 34.6, k), dist: lerp(900, 800, k), pitch: 72, yaw: lerp(4, -2, k)};
   const p = easeInOut(seg(t, S40.d0, S40.d1));
   const lab = easeOut(seg(t, S40.d1 - 0.4, S40.d1 + 0.4));
   const mid = project(cam, 109.6, 34.52, 6);
