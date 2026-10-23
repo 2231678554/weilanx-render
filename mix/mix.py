@@ -87,7 +87,7 @@ def grade(img):  # img float 0-1 BGR
     img = img + sh_*np.array([0.05, 0.025, -0.02]) + hi*np.array([-0.03, 0.01, 0.045])  # 暗部青、亮部暖
     img = 0.5 + (img - 0.5)*1.2
     return np.clip(img, 0, 1)
-FD = os.environ.get("FONTDIR", "/usr/share/fonts/opentype/noto"); FONT = f"{FD}/NotoSerifCJK-Bold.ttc"; FONTL = f"{FD}/NotoSerifCJK-Light.ttc"
+FD = os.environ.get("FONTDIR", "/usr/share/fonts/opentype/noto"); FONT = f"{FD}/NotoSerifCJK-Bold.ttc"; FONTL = f"{FD}/NotoSerifCJK-ExtraLight.ttc"
 def text_layer(lines, prog):
     """lines: [(文字, 字号, y, 字距, 字体)]，prog 0-1 逐字浮现"""
     im = Image.new("RGBA", (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
