@@ -3,7 +3,8 @@ import cv2, numpy as np, librosa, torch, subprocess, math, json, os
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 SRC = "mix/src.mp4"; OUT = "mix/out"; os.makedirs(OUT, exist_ok=True)
 W, H, FPS = 1920, 1080, 30
-cap = cv2.VideoCapture(SRC); sf = cap.get(cv2.CAP_PROP_FPS) or 30
+subprocess.run(["ffmpeg","-v","error","-y","-i",SRC,"-an","-c:v","libx264","-crf","10","-pix_fmt","yuv420p","mix/src264.mp4"],check=True)
+cap = cv2.VideoCapture("mix/src264.mp4"); sf = cap.get(cv2.CAP_PROP_FPS) or 30
 raw = []
 while True:
     ok, f = cap.read()
