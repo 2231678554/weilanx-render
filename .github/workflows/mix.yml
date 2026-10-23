@@ -1,5 +1,9 @@
 name: Beat mix
-on: {workflow_dispatch: {}}
+on:
+  workflow_dispatch:
+    inputs:
+      src: {default: mix/src.mp4}
+      speed: {default: '1'}
 jobs:
   mix:
     runs-on: ubuntu-latest
@@ -9,10 +13,10 @@ jobs:
       - uses: actions/setup-python@v5
         with: {python-version: '3.11', cache: pip, cache-dependency-path: .github/workflows/mix.yml}
       - run: |
-          (timeout 60 sudo apt-get update -qq || true); for i in 1 2 3; do timeout 200 sudo apt-get install -y -qq ffmpeg fonts-noto-cjk >/dev/null && break; done
+          (timeout 60 sudo apt-get update -qq || true); for i in 1 2 3; do timeout 200 sudo apt-get install -y -qq ffmpeg >/dev/null && break; done
           ls /usr/share/fonts/opentype/noto/ | head
           pip install -q torch torchvision --index-url https://download.pytorch.org/whl/cpu && pip install -q librosa opencv-python-headless pillow soundfile
-      - run: python mix/mix.py
+      - run: SRC=${{ inputs.src }} SPEED=${{ inputs.speed }} python mix/mix.py
       - uses: actions/upload-artifact@v4
         if: always()
         with: {name: mix-video, path: mix/out/, retention-days: 7}

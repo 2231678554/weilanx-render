@@ -1,7 +1,7 @@
 # 颜值混剪：自动卡点 + 变速(光流补帧) + 人物发光(RVM抠像) + 冲击/RGB分离/闪白 + 电影调色/遮幅/颗粒 + 标题
 import cv2, numpy as np, librosa, torch, subprocess, math, json, os
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
-SRC = "mix/src.mp4"; OUT = "mix/out"; os.makedirs(OUT, exist_ok=True)
+SRC = os.environ.get("SRC", "mix/src.mp4"); SPEED = float(os.environ.get("SPEED", "1")); OUT = "mix/out"; os.makedirs(OUT, exist_ok=True)
 W, H, FPS = 1920, 1080, 30
 subprocess.run(["ffmpeg","-v","error","-y","-i",SRC,"-an","-c:v","libx264","-crf","10","-pix_fmt","yuv420p","mix/src264.mp4"],check=True)
 cap = cv2.VideoCapture("mix/src264.mp4"); sf = cap.get(cv2.CAP_PROP_FPS) or 30
@@ -14,7 +14,8 @@ NS = len(raw); sh, sw = raw[0].shape[:2]; print("src", NS, sw, sh, sf)
 # 裁掉四角台标：中心 950x534(16:9)
 cw, ch = int(sw*0.95), int(sw*0.95*9/16); cx0, cy0 = (sw-cw)//2, (sh-ch)//2
 # ---------- 音乐分析 ----------
-subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", SRC, "-ac", "1", "-ar", "22050", "mix/a.wav"], check=True)
+subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", SRC, "-vn", "-filter:a", f"atempo={SPEED}", "-ar", "48000", "mix/aud.wav"], check=True)
+subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", "mix/aud.wav", "-ac", "1", "-ar", "22050", "mix/a.wav"], check=True)
 y, sr = librosa.load("mix/a.wav", sr=22050)
 DUR = len(y)/sr
 oenv = librosa.onset.onset_strength(y=y, sr=sr)
@@ -33,7 +34,7 @@ for i in range(1, NS):
     c = cv2.compareHist(hs[i-1], hs[i], cv2.HISTCMP_CORREL)
     if c < 0.55 and i - cuts[-1] > sf*0.4: cuts.append(i)
 cuts.append(NS); print("cuts", cuts)
-cut_t = [c/sf for c in cuts[1:-1]]
+cut_t = [c/sf/SPEED for c in cuts[1:-1]]
 hits = np.unique(np.round(np.concatenate([strong, cut_t]), 2))
 # ---------- 抠像 RVM ----------
 model = torch.hub.load("PeterL1n/RobustVideoMatting", "mobilenetv3", trust_repo=True).eval()
@@ -49,6 +50,7 @@ print("matting ok")
 # ---------- 变速：每个镜头 快-慢-快 ----------
 def src_time(T):
     """输出时间 -> 源帧浮点索引（镜头边界保持在原位，镜头内做 ramp）"""
+    T = T*SPEED
     for si in range(len(cuts)-1):
         a, b = cuts[si]/sf, cuts[si+1]/sf
         if T < b or si == len(cuts)-2:
@@ -107,7 +109,7 @@ NT = int(DUR*FPS); BAR = int((H - W/2.35)/2)
 title = [("惊 鸿", 128, 640, 46, FONT, 0.0), ("一 眼 万 年", 40, 820, 22, FONTL, 0.35)]
 endt = [("回 眸", 110, 470, 40, FONT, 0.0)]
 prev_si = -1; pipe = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
-    "-i", SRC, "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-preset", "slow", "-crf", "15", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "256k", "-shortest", "-movflags", "+faststart", f"{OUT}/混剪.mp4"], stdin=subprocess.PIPE)
+    "-i", "mix/aud.wav", "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-preset", "slow", "-crf", "15", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "256k", "-shortest", "-movflags", "+faststart", f"{OUT}/混剪.mp4"], stdin=subprocess.PIPE)
 SEL = [int(x) for x in os.environ["FRAMES"].split(",")] if os.environ.get("FRAMES") else None
 for n in (SEL or range(NT)):
     T = n/FPS; fi, si = src_time(T)
@@ -117,7 +119,7 @@ for n in (SEL or range(NT)):
     cut_flash = env(T, np.array(cut_t), 0.09)
     # 冲击缩放（弹簧）+ 缓慢推进 + 微抖
     sp = env(T, hits, 0.35); spring = sp*math.cos((1-sp)*9)*0.055
-    z = 1.04 + 0.03*((T - cuts[si]/sf)/max(0.3, (cuts[si+1]-cuts[si])/sf)) + spring
+    z = 1.04 + 0.03*((T*SPEED - cuts[si]/sf)/max(0.3, (cuts[si+1]-cuts[si])/sf)) + spring
     jx, jy = (rng.normal(0, 1)*6*es, rng.normal(0, 1)*6*es)
     M = cv2.getRotationMatrix2D((cw/2, ch/2), 0, z*W/cw); M[0, 2] += W/2 - cw/2 + jx; M[1, 2] += H/2 - ch/2 + jy
     M[0, 2] -= (z*W/cw - W/cw)*0; img = cv2.warpAffine(img, M, (W, H), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REFLECT)
