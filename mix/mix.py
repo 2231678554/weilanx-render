@@ -69,10 +69,10 @@ def flow(i, j):
     return fcache[k]
 gx, gy = np.meshgrid(np.arange(sw, dtype=np.float32), np.arange(sh, dtype=np.float32))
 def sample(fi):
-    i = int(math.floor(fi)); a = fi - i; j = min(i+1, NS-1)
+    i = int(math.floor(fi)); a = np.float32(fi - i); j = min(i+1, NS-1)
     if a < 0.03 or j == i: return raw[i].astype(np.float32), alpha[i]
     if a > 0.97: return raw[j].astype(np.float32), alpha[j]
-    F01, F10 = flow(i, j), flow(j, i)
+    F01, F10 = flow(i, j).astype(np.float32), flow(j, i).astype(np.float32)
     m0x, m0y = gx - a*F01[..., 0], gy - a*F01[..., 1]; m1x, m1y = gx - (1-a)*F10[..., 0], gy - (1-a)*F10[..., 1]
     w0 = cv2.remap(raw[i], m0x, m0y, cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT).astype(np.float32)
     w1 = cv2.remap(raw[j], m1x, m1y, cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT).astype(np.float32)
@@ -85,14 +85,14 @@ def grade(img):  # img float 0-1 BGR
     l = img.mean(2, keepdims=True)
     sh_ = np.clip(1 - l*2.2, 0, 1); hi = np.clip(l*1.8 - 0.8, 0, 1)
     img = img + sh_*np.array([0.05, 0.025, -0.02]) + hi*np.array([-0.03, 0.01, 0.045])  # 暗部青、亮部暖
-    img = 0.5 + (img - 0.5)*1.12
+    img = 0.5 + (img - 0.5)*1.2
     return np.clip(img, 0, 1)
-FONT = "/usr/share/fonts/opentype/noto/NotoSerifCJK-Bold.ttc"; FONTL = "/usr/share/fonts/opentype/noto/NotoSerifCJK-Light.ttc"
+FD = os.environ.get("FONTDIR", "/usr/share/fonts/opentype/noto"); FONT = f"{FD}/NotoSerifCJK-Bold.ttc"; FONTL = f"{FD}/NotoSerifCJK-Light.ttc"
 def text_layer(lines, prog):
     """lines: [(文字, 字号, y, 字距, 字体)]，prog 0-1 逐字浮现"""
     im = Image.new("RGBA", (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
     for (s, size, yy, sp, fp, delay) in lines:
-        ft = ImageFont.truetype(fp, size); ws = [d.textlength(c, font=ft) for c in s]; tw = sum(ws) + sp*(len(s)-1); x = (W - tw)/2
+        ft = ImageFont.truetype(fp, size); ws = [d.textlength(c, font=ft) for c in s]; tw = sum(ws) + sp*(len(s)-1); x = W*0.2 - tw/2
         for k, c in enumerate(s):
             q = np.clip((prog - delay)*3.2 - k*0.18, 0, 1); q = q*q*(3-2*q)
             if q > 0: d.text((x, yy + (1-q)*18), c, font=ft, fill=(255, 244, 228, int(255*q)))
@@ -108,7 +108,8 @@ title = [("惊 鸿", 128, 640, 46, FONT, 0.0), ("一 眼 万 年", 40, 820, 22, 
 endt = [("回 眸", 110, 470, 40, FONT, 0.0)]
 prev_si = -1; pipe = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
     "-i", SRC, "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-preset", "slow", "-crf", "15", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "256k", "-shortest", "-movflags", "+faststart", f"{OUT}/混剪.mp4"], stdin=subprocess.PIPE)
-for n in range(NT):
+SEL = [int(x) for x in os.environ["FRAMES"].split(",")] if os.environ.get("FRAMES") else None
+for n in (SEL or range(NT)):
     T = n/FPS; fi, si = src_time(T)
     img, pha = sample(fi)
     img = img[cy0:cy0+ch, cx0:cx0+cw]; pha = pha[cy0:cy0+ch, cx0:cx0+cw]
@@ -131,14 +132,14 @@ for n in range(NT):
     small = cv2.resize((img*pha), (W//4, H//4)); glow = cv2.resize(cv2.GaussianBlur(small, (0, 0), 10), (W, H))
     ps = cv2.resize(pha, (W//4, H//4)); edge = np.clip(cv2.GaussianBlur(ps, (0, 0), 3) - cv2.erode(ps, np.ones((5, 5)))*1.0, 0, 1)
     rim = cv2.resize(cv2.GaussianBlur(edge, (0, 0), 2.5), (W, H))[..., None]*np.array([0.55, 0.78, 1.0])
-    k = 0.38 + 0.55*eh
+    k = 0.3 + 0.5*eh
     img = 1 - (1-img)*(1 - glow*k*0.9)            # screen
     img = np.clip(img + rim*(0.5 + 1.1*eh), 0, 1)
     # 高光泛光
-    hl = np.clip(cv2.resize(img, (W//4, H//4)) - 0.72, 0, 1); img = np.clip(img + cv2.resize(cv2.GaussianBlur(hl, (0, 0), 14), (W, H))*0.9, 0, 1)
+    hl = np.clip(cv2.resize(img, (W//4, H//4)) - 0.8, 0, 1); img = np.clip(img + cv2.resize(cv2.GaussianBlur(hl, (0, 0), 14), (W, H))*0.5, 0, 1)
     # 漏光（暖色光斑缓慢游移）
     lx = W*(0.15 + 0.7*(0.5 + 0.5*math.sin(T*0.37))); ly = H*(0.3 + 0.2*math.sin(T*0.53))
-    leak = np.exp(-(((vx - lx)/(W*0.35))**2 + ((vy - ly)/(H*0.5))**2))[..., None]*np.array([0.25, 0.55, 1.0])*(0.16 + 0.25*eh)
+    leak = np.exp(-(((vx - lx)/(W*0.35))**2 + ((vy - ly)/(H*0.5))**2))[..., None]*np.array([0.25, 0.55, 1.0])*(0.07 + 0.12*eh)
     img = 1 - (1-img)*(1-leak)
     # RGB 分离（重拍）
     if es > 0.05:
@@ -162,6 +163,7 @@ for n in range(NT):
     # 首尾淡入淡出
     img = img*min(1, T/0.35, (DUR - T)/0.6)
     out = (np.clip(img, 0, 1)*255).astype(np.uint8)
+    if SEL: cv2.imwrite(f"{OUT}/s_{n:04d}.jpg", out); continue
     pipe.stdin.write(out.tobytes())
     if n % 60 == 0:
         cv2.imwrite(f"{OUT}/p_{n:04d}.jpg", cv2.resize(out, (640, 360))); print("frame", n, NT, flush=True)
