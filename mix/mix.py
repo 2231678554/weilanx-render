@@ -36,7 +36,7 @@ cuts.append(NS); print("cuts", cuts)
 cut_t = [c/sf for c in cuts[1:-1]]
 hits = np.unique(np.round(np.concatenate([strong, cut_t]), 2))
 # ---------- 抠像 RVM ----------
-model = torch.hub.load("PeterL1n/RobustVideoMatting", "mobilenetv3").eval()
+model = torch.hub.load("PeterL1n/RobustVideoMatting", "mobilenetv3", trust_repo=True).eval()
 alpha = [None]*NS
 with torch.no_grad():
     for si in range(len(cuts)-1):
